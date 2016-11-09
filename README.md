@@ -1,2 +1,0 @@
-# Dealified
-Winter is coming :-)
