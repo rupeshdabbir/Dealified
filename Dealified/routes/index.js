@@ -6,7 +6,10 @@ var jwt = require('jsonwebtoken');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', crawler.crawl
+router.get('/', function(req,res){
+
+    crawler.crawl();
+    res.render('error', {title: 'Express'});
   // res.render('index', { title:  });
   //
   // 
@@ -14,7 +17,7 @@ router.get('/', crawler.crawl
     
     
     // res.status(200).json({json:'hello'});
-);
+});
 
 router.post('/login', function(req,res){
    if(req.body.username =='Sid'){
