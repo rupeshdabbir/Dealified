@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
+// var mongoUtil = require('./routes/mongo');
 
 
 var index = require('./routes/index');
@@ -15,9 +16,14 @@ var crawler = require('./routes/crawler');
 var app = express();
 
 var j = schedule.scheduleJob('*/1 * * *', function() {
-    crawler.crawl();
+    // crawler.crawl();
 
 });
+//
+// mongoUtil.connect(function (err) {
+//     console.log(err);
+// });
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

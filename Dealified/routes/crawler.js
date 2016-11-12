@@ -4,10 +4,11 @@
 
 var Xray = require('x-ray');
 var mongo = require('./mongo');
-var mongoURL = "mongodb://localhost:27017/delified";
+var db;
+mongo.connect(function(_db){
+    db = _db;
+});
 var moment = require('moment');
-var request = require('request');
-var cheerio = require('cheerio');
 
 
 var xray = Xray({
@@ -22,14 +23,17 @@ var xray = Xray({
             return typeof value === 'string' ? value.slice(start, end) : value
         }
     }
-});
+}).concurrency(5);
 
 exports.crawl = function() {
-
-    console.log("Run");
+    var end;
+    console.log("Running");
+    // console.log(db);
     // xray('http://google.com', 'title')(function (err, title) {
     //     // console.log(title);
     // });
+
+    var start = new Date();
 
     xray('https://slickdeals.net', '.fpGridBox', [{
         title: '.itemImageAndName a.itemImageLink@title',
@@ -38,15 +42,32 @@ exports.crawl = function() {
         price: '.fpGridBox .itemInfoLine .itemPrice | trim'
     }])(function (err, title) {
             title.forEach(function (element) {
-                xray(element.href,'#titleInfoRow',[{
+
+                xray(element.href, '#titleInfoRow', {
                     date: '.date',
                     time: '.time'
-                }])(function (err, date) {
-                    console.log(element.href, date);
+                })(function(err, data){
+                    if(data.date == 'Today')
+                        data.date = moment().format("MM-DD-YYYY");
+                    else if(data.date == 'Yesterday')
+                        data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
+
+                    products = db.collection('products');
+
+                    // console.log(element.title);
+                    products.updateOne({"title": element.title},
+                        {$set: {"title": element.title, "href": element.href, "postDate": data.date, "postTime": data.time}},
+                        {upsert: true}, function (err) {
+                            console.log("in");
+                            if (err)
+                                console.log(err);
+                        });
 
                 });
 
+
         });
+
     });
 
     xray('https://slickdeals.net/forums/forumdisplay.php?f=9', '[id^=sdpostrow_]', [{
@@ -56,8 +77,9 @@ exports.crawl = function() {
     }])
         .paginate('.search_pagenav_text@href')
         .limit(20)(function (err, title) {
-            mongo.connect(mongoURL, function (db) {
                 title.forEach(function (element) {
+
+
                     var a = element.postDate.split('\n');
                     element["postTime"] = a[1].trim();
                     if(a[0] == 'Today')
@@ -69,7 +91,8 @@ exports.crawl = function() {
                         element.postDate = a[0];
 
                     product = db.collection('deals');
-                    product.updateOne({"title": element.title, "postDate": element.postDate}, {$set: {"product": element}}, {upsert: true}, function (err) {
+                    product.updateOne({"title": element.title},
+    {$set: {"title": element.title, "href": element.href, "postDate": element.postDate, "postTime": element.postTime}}, {upsert: true}, function (err) {
                         if (err)
                             console.log(err);
                     });
@@ -77,19 +100,31 @@ exports.crawl = function() {
                 })
 
             });
-        });
+
+
 
 }
-//
-// exports.data = function(req,res){
-//
-//
-//     mongo.connect(mongoURL,function(db){
-//
-//         db.collection('deals').find();
-//
-//
-//
-//     });
 
-// }
+
+//
+exports.getData = function(req,res){
+
+
+    db.collection('deals').find({}).toArray(function(err, data){
+
+        // console.log(data);
+        res.status(200).json(data);
+
+    });
+
+
+
+    // mongo.connect(mongoURL,function(db){
+    //
+    //     db.collection('deals').find();
+    //
+    //
+    //
+    // });
+
+}

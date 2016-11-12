@@ -8,7 +8,7 @@ class FinalClass extends React.Component{
     render(){
 return(
 
- <div><Selection /> <List /></div>
+ <div><List /></div>
 );
 
 }

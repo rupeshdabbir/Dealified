@@ -4,18 +4,28 @@ import {render} from 'react-dom';
 export class Listing extends React.Component{
     render(){
         return(<div>
+                <table>
+                <th>Title</th> <th>Date</th>
 
-                <p>{this._getImages()}</p>
+                    {this._getItems()}
+
+                </table>
             </div>
 
         );
     }
 
-    _getImages(){
-        alert(this.props.source[0].src);
+    _getItems(){
+        // alert(this.props.data);
         return(
-          this.props.source.map((image) => {return(
-              <img src={image.src}></img>);  }
+          this.props.data.map((item) => {return(
+
+              <tr>
+                  <td><a href={item.href}> {item.title} </a></td>
+                  
+                  <td>{item.postDate}</td>
+                  </tr>
+              );  }
           )
         );
 

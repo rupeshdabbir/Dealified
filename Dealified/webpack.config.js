@@ -6,7 +6,7 @@ var BUILD_DIR = path.resolve(__dirname, 'public');
 var APP_DIR = path.resolve(__dirname, 'public/javascripts');
 
 var config = {
-  entry: APP_DIR + '/renderer.js',
+  entry: APP_DIR + '/index.js',
 
   output: {
     path: BUILD_DIR,
@@ -18,6 +18,16 @@ module:{
         test : /\.jsx?/,
         include : APP_DIR,
         loader : 'babel'
+      },
+      {
+        test: /\.css$/,
+        loader: 'style!css!'
+
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style!css!sass'
+
       }
     ]
 }

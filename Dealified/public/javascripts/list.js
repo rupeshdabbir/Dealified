@@ -12,27 +12,23 @@ export class List extends React.Component{
         super();
 
         this.state = {
-            comments : []
+            list: []
         };
     }
     componentWillMount(){
-        this._loadComments();
+        this._loadItems();
     }
 
 
     render() {
-
-        let images;
-
-
         return (
             <div>
-                {this._getComments()}
+                <Listing data={this.state.list} />
             </div>
         );
     }
     componentDidMount(){
-         this._timer =  setInterval(() => { this._loadComments()}, 5000);
+         this._timer =  setInterval(() => { this._loadItems()}, 100000);
     }
 
     componentWillUnmount(){
@@ -41,23 +37,24 @@ export class List extends React.Component{
     }
 
 
-    _getComments(){
+    // _getComments(){
+    //
+    //     return(
+    //         this.state.comments.map((comment) => {
+    //             return(
+    //                 <Listing {...list}  />);
+    //         })
+    //     );
+    // }
 
-        return(
-            this.state.comments.map((comment) => {
-                return(
-                    <Listing name={comment.author} body={comment.body} source={comment.img} key={comment.id}  />);
-            })
-        );
-    }
-
-    _loadComments(){
+    _loadItems(){
 
         jQuery.ajax({
             method:'GET',
-            url:'/load',
-            success: (comment) => {
-                this.setState({comments: comment})
+            url:'/getData',
+            success: (listItem) => {
+                this.setState({list: listItem})
+                console.log()
             }
         });
 
