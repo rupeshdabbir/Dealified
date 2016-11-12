@@ -50,13 +50,6 @@ export class Welcome extends React.Component {
             </Panel>
           </Col>
         </Row>
-        <Row>
-          <Col padding={5}>
-            <Panel title='Google Map Component'>
-              <GMap/>
-            </Panel>
-          </Col>
-        </Row>
       </Page>
     );
   }

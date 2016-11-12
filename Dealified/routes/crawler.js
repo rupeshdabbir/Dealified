@@ -56,9 +56,9 @@ exports.crawl = function() {
 
                     // console.log(element.title);
                     products.updateOne({"title": element.title},
-                        {$set: {"title": element.title, "href": element.href, "postDate": data.date, "postTime": data.time}},
+                        {$set: {"title": element.title, "href": element.href, "image": element.image ,"postDate": data.date, "postTime": data.time}},
                         {upsert: true}, function (err) {
-                            console.log("in");
+                            // console.log("in");
                             if (err)
                                 console.log(err);
                         });
@@ -110,7 +110,7 @@ exports.crawl = function() {
 exports.getData = function(req,res){
 
 
-    db.collection('deals').find({}).limit(10).toArray(function(err, data){
+    db.collection('products').find({}).toArray(function(err, data){
         res.status(200).json(data);
 
     });

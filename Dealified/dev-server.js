@@ -18,7 +18,7 @@ const devMiddleware = require('webpack-dev-middleware')(compiler, {
 });
 
 var j = schedule.scheduleJob('*/1 * * *', function() {
-  // crawler.crawl();
+  crawler.crawl();
 
 });
 
@@ -33,13 +33,16 @@ app.use( function(req, res, next) {
   console.log(file);
   if (['index.html'].indexOf(file) !== -1) {
     console.log("index typed");
+    // crawler.crawl();
     res.end(devMiddleware.fileSystem.readFileSync(path.join(config.output.path, file)));
   } else if (file.indexOf('.') === -1) {
     console.log("index typed2");
+    // crawler.crawl();
     // if the url does not have an extension, assume they've navigated to something like /home and want index.html
     res.end(devMiddleware.fileSystem.readFileSync(path.join(config.output.path, 'index.html')));
   } else {
     console.log("index typed3");
+    // crawler.crawl();
     next();
   }
 });
