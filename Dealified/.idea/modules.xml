@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ReactTest.iml" filepath="$PROJECT_DIR$/.idea/ReactTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/react-webpack-skeleton.iml" filepath="$PROJECT_DIR$/.idea/react-webpack-skeleton.iml" />
     </modules>
   </component>
 </project>

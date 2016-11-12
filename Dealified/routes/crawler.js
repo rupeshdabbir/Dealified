@@ -110,9 +110,7 @@ exports.crawl = function() {
 exports.getData = function(req,res){
 
 
-    db.collection('deals').find({}).toArray(function(err, data){
-
-        // console.log(data);
+    db.collection('deals').find({}).limit(10).toArray(function(err, data){
         res.status(200).json(data);
 
     });

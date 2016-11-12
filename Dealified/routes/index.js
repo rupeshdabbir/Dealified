@@ -10,21 +10,21 @@ var timerObject = new NanoTimer();
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req,res){
-
-    // var microsecs = timerObject.time(crawler.data, '', 'u');
-    // console.log(microsecs);
-    // crawler.crawl();
-    
-    res.render('index');
-  // res.render('index', { title:  });
-  //
-  // 
-  // });
+// router.get('/', function(req,res){
+//
+//     // var microsecs = timerObject.time(crawler.data, '', 'u');
+//     // console.log(microsecs);
+//     // crawler.crawl();
+//    
+//     res.render('index');
+//   // res.render('index', { title:  });
+//   //
+//   // 
+//   // });
     
     
     // res.status(200).json({json:'hello'});
-});
+// });
 
 router.get('/getData', crawler.getData
 
