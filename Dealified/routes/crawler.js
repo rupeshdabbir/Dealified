@@ -27,7 +27,7 @@ var xray = Xray({
 
 exports.crawl = function() {
     var end;
-    console.log("Running");
+    console.log("Running Crawler");
     // console.log(db);
     // xray('http://google.com', 'title')(function (err, title) {
     //     // console.log(title);
@@ -54,18 +54,14 @@ exports.crawl = function() {
 
                     products = db.collection('products');
 
-                    // console.log(element.title);
                     products.updateOne({"title": element.title},
-                        {$set: {"title": element.title, "href": element.href, "postDate": data.date, "postTime": data.time}},
+                        {$set: {"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}},
                         {upsert: true}, function (err) {
-                            console.log("in");
                             if (err)
                                 console.log(err);
                         });
 
                 });
-
-
         });
 
     });
@@ -100,29 +96,30 @@ exports.crawl = function() {
                 })
 
             });
-
-
-
 }
 
 
-//
 exports.getData = function(req,res){
 
-
-    db.collection('deals').find({}).limit(10).toArray(function(err, data){
+    db.collection('products').find({}).toArray(function(err, data){
         res.status(200).json(data);
-
     });
+}
 
 
+exports.searchData = function(req,res){
 
-    // mongo.connect(mongoURL,function(db){
-    //
-    //     db.collection('deals').find();
-    //
-    //
-    //
-    // });
+  console.log(req);
+  var data = req.body['demo'];
+  console.log(data);
 
+  var regex = { title: { $regex: ''+data+'', $options: 'i' } };
+  console.log(regex);
+
+  //db.collection('deals').find(regex).limit(10).toArray(function(err, deals){
+    db.collection('products').find(regex).limit(10).toArray(function(err, products){
+      var data = products;
+      res.status(200).json(data);
+    });
+  //});
 }

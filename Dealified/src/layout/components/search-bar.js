@@ -1,43 +1,55 @@
 import Autosuggest from 'react-autosuggest';
 import React from 'react';
 import { Row, Col } from 'react-flex-proto';
+import jquery from 'jquery';
+import _ from 'underscore';
+import { Throttle, Debounce } from 'react-throttle';
+import {throttle} from 'throttle-debounce';
+import {debounce} from 'throttle-debounce';
+var pubsub = require('pubsub-js');
 
 const suggestionExamples = [
   {
-    text: 'Tabs',
+    text: 'Visio',
   },
   {
-    text: 'Buttons',
+    text: 'iPad',
   },
   {
-    text: 'Progress Bars',
+    text: 'iPhone',
   },
   {
-    text: 'Tables',
+    text: 'Laptop',
   },
   {
-    text: 'About',
+    text: 'Macbook',
   },
   {
-    text: 'Inputs',
+    text: 'Canon',
   },
   {
-    text: 'Notifications',
+    text: 'DSLR',
   },
   {
-    text: 'Home',
+    text: 'camera',
   },
   {
-    text: 'Panels',
+    text: 'sony',
   },
   {
-    text: 'Modals',
+    text: 'tv',
   },
 ];
+
+export let name;
+
 
 export class SearchBar extends React.Component {
   constructor() {
     super();
+
+
+    //this.emitter.emit()
 
     this.state = {
       value: '',
@@ -49,9 +61,31 @@ export class SearchBar extends React.Component {
     this.onSuggestionsUpdateRequested = this.onSuggestionsUpdateRequested.bind(this);
   }
 
+
   onChange(event, { newValue }) {
+
+
+    // _.throttle( () => {  this.getValue(newValue) } , 500 );
+
+    this.getValue(newValue)
+
     this.setState({
-      value: newValue,
+      value: newValue
+    });
+  }
+
+  getValue(newValue){
+    //console.log(newValue);
+    jquery.post({
+      type: 'POST',
+      url: '/api/searchData',
+      data: JSON.stringify({"demo": newValue}),
+      dataType:'json',
+      contentType: 'application/json; charset=utf-8',
+      success: (data) => {
+        name = data;
+        pubsub.publish('searchChange', data);
+      }
     });
   }
 
@@ -106,9 +140,9 @@ export class SearchBar extends React.Component {
   render() {
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Search for...',
+      placeholder: 'Try me! Search for iPad, iPhone',
       value,
-      onChange: this.onChange,
+      onChange: throttle(150, this.onChange),
     };
 
     return (
@@ -118,12 +152,13 @@ export class SearchBar extends React.Component {
         </Col>
         <Col padding={0}>
           <Autosuggest suggestions={suggestions}
-            onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
-            getSuggestionValue={this.getSuggestionValue}
-            renderSuggestion={this.renderSuggestion}
-            inputProps={inputProps} />
+              onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
+              getSuggestionValue={this.getSuggestionValue}
+              renderSuggestion={this.renderSuggestion}
+              inputProps={inputProps} />
         </Col>
       </Row>
     );
   }
 }
+

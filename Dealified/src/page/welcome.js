@@ -1,61 +1,84 @@
 import React from 'react';
 import { Page, Panel } from 'react-blur-admin';
 import { Row, Col } from 'react-flex-proto';
-import { GMap } from 'src/layout/components/gmap';
+import {SearchBar} from 'src/layout/components/search-bar';
+import Card from 'src/layout/components/card';
+require('../layout/css/welcome.css');
+import $ from 'jquery';
+var pubsub = require('pubsub-js');
+
 
 export class Welcome extends React.Component {
 
+  constructor(){
+    super();
+    this.state = {
+      list:[]
+    };
+  }
+
+  //Before
+  // componentWillMount(){
+  //   this.loadDashboard();
+  // }
+
+  componentDidMount(){
+    pubsub.subscribe('searchChange', (message, data) => {
+      console.log(data);
+      this.setState({list : data});
+
+    });
+
+    $(document).on("mouseover", "#product-card", function(e){
+      $(e.currentTarget).addClass('animate');
+    });
+
+    $(document).on("mouseout", "#product-card", function(e){
+      $(e.currentTarget).removeClass('animate');
+    });
+
+  }
+
+  renderSearch() {
+    return (
+      <div className="search">
+        <SearchBar />
+      </div>
+    );
+  }
+
+
+  renderCard() {
+
+    return (
+      this.state.list.map((item) => {
+        return (
+          <Col padding={5}>
+            <Panel className="panel1">
+          <Card data={item}/>
+          </Panel>
+          </Col>
+        );
+
+      })
+    );
+
+  }
+
   render() {
     return (
-      <Page title={process.env.APP_NAME}>
+      <Page title="Dashboard">
         <Row>
           <Col padding={5}>
             <Panel>
-              This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph.
-            </Panel>
-          </Col>
-          <Col padding={5}>
-            <Panel title='This is a title'>
-              This is a paragraph
-            </Panel>
-          </Col>
-          <Col padding={5}>
-            <Panel title='Red Paragraph'>
-              <div className='red-text'>
-                This is a red paragraph
-              </div>
+              {this.renderSearch()}
             </Panel>
           </Col>
         </Row>
 
-        <h2>More Panels</h2>
+        <h2>Search Results</h2>
         <Row>
-          <Col padding={5}>
-            <Panel>
-              This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph.
-            </Panel>
-          </Col>
-          <Col padding={5}>
-            <Panel title='Yellow paragraph'>
-              <div className='yellow-text'>
-                This is a paragraph
-              </div>
-            </Panel>
-          </Col>
-          <Col padding={5}>
-            <Panel title='Blue paragraph'>
-              <div className='blue-text'>
-                This is a paragraph
-              </div>
-            </Panel>
-          </Col>
-        </Row>
-        <Row>
-          <Col padding={5}>
-            <Panel title='Google Map Component'>
-              <GMap/>
-            </Panel>
-          </Col>
+          {this.renderCard()}
         </Row>
       </Page>
     );

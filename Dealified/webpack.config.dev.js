@@ -7,6 +7,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 const pkg = require('./package.json');
 
 module.exports = {
@@ -24,7 +25,7 @@ module.exports = {
   },
   resolve: {
     root: __dirname,
-    extensions: [ '', '.js' ],
+    extensions: [ '', '.js', '.scss', '.css', '.json' ],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -64,5 +65,12 @@ module.exports = {
       { test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap') },
       { test: /\.scss$/, loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap!postcss-loader') },
     ],
+      postcss: [autoprefixer],
+      sassLoader: {
+          data: '@import "theme/_config.scss";',
+                 includePaths: [path.resolve(__dirname, './src/app')]
+}
+
+    ,
   },
 };

@@ -3,6 +3,7 @@
 
 const _ = require('lodash');
 var schedule = require('node-schedule');
+var bodyParser = require('body-parser')
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
@@ -17,9 +18,17 @@ const devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: config.output.publicPath,
 });
 
-var j = schedule.scheduleJob('*/1 * * *', function() {
-  // crawler.crawl();
+// create application/json parser
+var jsonParser = bodyParser.json();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
+var j = schedule.scheduleJob('*/1 * * *', function() {
+  crawler.crawl();
 });
 
 app.use(devMiddleware);
@@ -32,14 +41,11 @@ app.use( function(req, res, next) {
   const file = _.last(reqPath.split('/'));
   console.log(file);
   if (['index.html'].indexOf(file) !== -1) {
-    console.log("index typed");
     res.end(devMiddleware.fileSystem.readFileSync(path.join(config.output.path, file)));
   } else if (file.indexOf('.') === -1) {
-    console.log("index typed2");
     // if the url does not have an extension, assume they've navigated to something like /home and want index.html
     res.end(devMiddleware.fileSystem.readFileSync(path.join(config.output.path, 'index.html')));
   } else {
-    console.log("index typed3");
     next();
   }
 });

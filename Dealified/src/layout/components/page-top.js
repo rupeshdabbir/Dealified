@@ -134,7 +134,7 @@ export class PageTop extends React.Component {
   renderSearch() {
     return (
       <div className="search">
-        <SearchBar />
+        {/*<SearchBar />*/}
       </div>
     );
   }

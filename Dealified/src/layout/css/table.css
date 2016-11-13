@@ -1,0 +1,88 @@
+.griddle-container{
+}
+
+.griddle .top-section{
+    clear:both;
+    display:table;
+    width:100%;
+}
+
+.griddle .griddle-filter{
+    float:left;
+    width:50%;
+    text-align:left;
+    color:#222;
+    min-height:1px;
+}
+
+.griddle .griddle-settings-toggle{
+    background: transparent;
+    float:left;
+    width:50%;
+    text-align:right;
+}
+
+.griddle .griddle-settings{
+    background: transparent;
+    color:#222;
+    padding:10px;
+    margin-bottom:10px;
+}
+.settings{
+    background: transparent;
+    border: none;
+}
+
+.griddle .griddle-settings .griddle-columns{
+    clear:both;
+    display:table;
+    border-bottom:1px solid #EDEDED;
+    margin-bottom: 0px;
+}
+
+.griddle .griddle-settings .griddle-column-selection {
+    float:left;
+    width:20%;
+}
+.griddle table{
+    width:100%;
+    /*table-layout:fixed;*/
+}
+
+
+.griddle .griddle-previous, .griddle .griddle-page, .griddle .griddle-next{
+    color: black !important;
+    float:left;
+    width:33%;
+    min-height:1px;
+    margin-top:5px;
+}
+
+.griddle .griddle-page{
+    text-align:center;
+}
+
+.griddle .griddle-next{
+    background-color: transparent;
+    text-align:right;
+}
+
+.tableName{
+    color: white;
+}
+
+.griddle-next > .btn {
+
+    position: relative !important;
+    left: -46px !important;
+    width: 69px !important;
+
+}
+
+/*.griddle-previous > button > span {*/
+/*display: none;*/
+/*}*/
+
+/*position: relative;*/
+/*left: -46px;*/
+/*width: 69px;*/
