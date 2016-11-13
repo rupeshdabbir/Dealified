@@ -15,20 +15,13 @@ class LinkComponent extends React.Component{
       height: '42px',
       width: '42px'
     }
-
     const style = {
       color: '#FFFFFF'
     }
-
     if(this)
-
-
       return(
-
         <img src={this.props.data} width={size.width} height={size.height}> </img>
       );
-
-
   }
 
 }
@@ -72,6 +65,14 @@ export class TableDemo extends React.Component {
   }
 
   componentDidMount(){
+    setInterval(this._loadItems(), 5000);
+  }
+
+  onEditableChange(key, value) {
+    this.setState({[key]: value});
+  }
+
+  componentDidMount(){
     // setInterval(this._loadItems(), 5000);
   }
 
@@ -82,7 +83,7 @@ export class TableDemo extends React.Component {
         <Link to='/'>
           Home
         </Link>
-        Hot Deals
+          Hot Deals
       </Breadcrumbs>
     );
   }
@@ -99,8 +100,29 @@ export class TableDemo extends React.Component {
     });
   }
 
-  render() {
+  _getItems(){
+    const size = {
+      height: '42px',
+      width: '42px'
+    }
 
+    const style = {
+      color: '#FFFFFF'
+    }
+
+    return(
+      this.state.currentList.map(item => {
+        return( <TableRow key={item._id}>
+            <td><img src={item.image} height={size.height} width={size.width} /></td>
+            <td><a href={item.href} style={style}>{item.title}</a></td>
+            <td>{item.postDate} {item.postTime}</td>
+            <td><Button type='success' title='Active' size='sm'/></td>
+          </TableRow>
+        );
+      })
+    );
+  }
+  render() {
     const metaData = [{
       "columnName": "title",
       "order": 7,
@@ -108,7 +130,6 @@ export class TableDemo extends React.Component {
       "visible": true,
       "displayName": "Title",
       "customComponent": HyperComponent
-
     },
       {
         "columnName": "postDate",
@@ -148,7 +169,6 @@ export class TableDemo extends React.Component {
 
     return (
       <Page actionBar={this.renderBreadcrumbs()} title='Hot Deals'>
-
         <Panel>
           <Griddle results={this.state.list} useGriddleStyles={false} columnMetadata={metaData} tableClassName="table" showFilter={true}
                    showSettings={true} nextIconComponent={<button className="btn btn-info btn-xm">Next</button>} columns={["image", "postDate", "title"]}/>
