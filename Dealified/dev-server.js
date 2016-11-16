@@ -26,9 +26,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-var j = schedule.scheduleJob('*/1 * * *', function() {
+//var j = schedule.scheduleJob('*/1 * * *', function() {
   crawler.crawl();
-});
+//});
 
 app.use(devMiddleware);
 app.use(require('webpack-hot-middleware')(compiler));

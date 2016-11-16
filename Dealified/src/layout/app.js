@@ -92,7 +92,7 @@ class AppLayout extends React.Component {
 
           <footer className="al-footer clearfix">
             <div className="al-footer-main clearfix">
-              <div className="al-copy">Dealified</div>
+              {/*<div className="al-copy">Dealified</div>*/}
               </div>
           </footer>
 

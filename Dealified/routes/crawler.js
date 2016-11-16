@@ -3,12 +3,20 @@
  */
 
 var Xray = require('x-ray');
+var r = require('rethinkdb');
+var db, rdb;
+//var rethinkDB = require('rethinkdb')
 var mongo = require('./mongo');
-var db;
 mongo.connect(function(_db){
     db = _db;
 });
+
+// mongo.rethinkconnect(function(_rdb){
+//   rdb = _rdb;
+// })
+
 var moment = require('moment');
+
 
 
 var xray = Xray({
@@ -54,12 +62,55 @@ exports.crawl = function() {
 
                     products = db.collection('products');
 
+
                     products.updateOne({"title": element.title},
                         {$set: {"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}},
                         {upsert: true}, function (err) {
                             if (err)
                                 console.log(err);
                         });
+
+                    //rethinkDB
+                    // rdb.db('delified').table('products').insert({"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}).run(conn, function(err, res)
+                    // {
+                    //   if(err) throw err;
+                    //   console.log(res);
+                    // });
+
+                    r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
+                      if(err) throw err;
+                      // r.db('delified').tableCreate('products').run(conn, function(err, res) {
+                      //   if(err) throw err;
+                      //   console.log(res);
+
+                      //console.log(element);
+                      if(element.title) {
+                        r.db('delified').table('products').insert({
+                          "title": element.title? element.title : "null",
+                          "href": element.href,
+                          "image": element.image,
+                          "postDate": data.date,
+                          "postTime": data.time
+                        }).run(conn, function (err, res) {
+                          if (err) console.log(err);
+                          //console.log(res);
+                        });
+                      }
+
+                      //Checking product table for a certain table name
+                      r.db('delified').table('products').filter(function(row){
+                        return row("title").downcase().match("microsoft");
+                      }).changes().run(conn, function(err,cursor){
+                        //cursor.each(console.log);
+                      });
+
+                      //For Multiple Queries
+                      // r.db("table").table("products").filter(function(row){
+                      //   return row("title").downcase().match("(.*)microsoft(.*)").and(row("price").lt(100));
+                      // })
+
+
+                    });
 
                 });
         });
@@ -109,12 +160,12 @@ exports.getData = function(req,res){
 
 exports.searchData = function(req,res){
 
-  console.log(req);
+  //console.log(req);
   var data = req.body['demo'];
-  console.log(data);
+  //console.log(data);
 
   var regex = { title: { $regex: ''+data+'', $options: 'i' } };
-  console.log(regex);
+  //console.log(regex);
 
   //db.collection('deals').find(regex).limit(10).toArray(function(err, deals){
     db.collection('products').find(regex).limit(10).toArray(function(err, products){

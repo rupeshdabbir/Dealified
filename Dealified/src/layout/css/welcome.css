@@ -1,3 +1,19 @@
 .panel1{
     max-width: 392px;
+    height:400px;
 }
+
+.search .flexbox .ion-ios-search-strong{
+    font-size: 30px !important;
+}
+
+.search .flexbox .react-autosuggest__container{
+    right: -15px;
+}
+
+/*.modal-dialog .modal-footer > button{*/
+    /*position: relative;*/
+    /*top: 63px;*/
+    /*left: -43px;*/
+/*}*/
+

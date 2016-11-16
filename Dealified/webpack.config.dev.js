@@ -64,6 +64,8 @@ module.exports = {
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file' },
       { test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap') },
       { test: /\.scss$/, loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap!postcss-loader') },
+      { test: /\.coffee$/, loader: "coffee-loader" },
+      { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee-loader?literate" }
     ],
       postcss: [autoprefixer],
       sassLoader: {

@@ -39,10 +39,7 @@ class HyperComponent extends React.Component{
     }
 
     if(this)
-
-
       return(
-
         <div><img className="tableName" href={this.props.rowData.href}>{this.props.data}</img></div>
       );
 
@@ -93,9 +90,7 @@ export class TableDemo extends React.Component {
       method: 'GET',
       url: '/api/getData',
       success: (listItem) => {
-        // console.log(listItem.title);
         this.setState({list: listItem });
-        // console.log()
       }
     });
   }

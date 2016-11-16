@@ -2,10 +2,7 @@ import Autosuggest from 'react-autosuggest';
 import React from 'react';
 import { Row, Col } from 'react-flex-proto';
 import jquery from 'jquery';
-import _ from 'underscore';
-import { Throttle, Debounce } from 'react-throttle';
-import {throttle} from 'throttle-debounce';
-import {debounce} from 'throttle-debounce';
+import _ from 'lodash';
 var pubsub = require('pubsub-js');
 
 const suggestionExamples = [
@@ -127,7 +124,7 @@ export class SearchBar extends React.Component {
     if (suggestion.type === 'no-results') {
       return (
         <div>
-          <i className='fa fa-exclamation-triangle' /> No results found, you may need to be more specific!
+          <i className='fa fa-exclamation-triangle' /> No results found! Be Specific
         </div>
       );
     }
@@ -142,7 +139,7 @@ export class SearchBar extends React.Component {
     const inputProps = {
       placeholder: 'Try me! Search for iPad, iPhone',
       value,
-      onChange: throttle(150, this.onChange),
+      onChange: _.debounce(this.onChange, 50),
     };
 
     return (

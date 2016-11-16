@@ -5,8 +5,14 @@ import { Link } from 'react-router';
 import _ from 'lodash';
 
 import {Row, Col} from 'react-flex-proto';
+var pubsub = require('pubsub-js');
 
 export class ModalDemo extends React.Component {
+
+  constructor(){
+    super();
+    pubsub.publish('alertClicked', ()=>{console.log("clicked")});
+  }
 
   state = {
     successModal: false,
@@ -147,6 +153,8 @@ export class ModalDemo extends React.Component {
   }
 
   render() {
+    //console.log(this.props.data);
+
     return (
       <Page actionBar={this.renderBreadcrumbs()} title='Modals'>
         <Modal type='success' title='Woot' isOpen={this.state.successModal} onClose={e => this.onCloseModal('successModal')}>
