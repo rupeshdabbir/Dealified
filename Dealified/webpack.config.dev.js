@@ -54,7 +54,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: [ /node_modules/, /__tests__/ ],
+        exclude: [ /node_modules/, /_tests_/ ],
         loader: 'babel-loader',
       },
       { test: /\.json$/, loader: 'json' },
@@ -62,10 +62,21 @@ module.exports = {
       { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&minetype=application/font-woff2' },
       { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&minetype=application/font-woff' },
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file' },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap') },
-      { test: /\.scss$/, loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap!postcss-loader') },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap'),
+        exclude: /(node_modules)\/react-toolbox/ },
+      { test: /\.scss$/, loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap!postcss-loader'),
+        exclude: /(node_modules)\/react-toolbox/ },
       { test: /\.coffee$/, loader: "coffee-loader" },
-      { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee-loader?literate" }
+      { test: /\.(coffee\.md|litcoffee)$/, loader: "coffee-loader?literate" },
+      {
+        test    : /(\.scss|\.css)$/,
+        include : /(node_modules)\/react-toolbox/,
+        loaders : [
+          require.resolve('style-loader'),
+          require.resolve('css-loader') + '?sourceMap&modules&importLoaders=1&localIdentName=[name]_[local]__[hash:base64:5]',
+          require.resolve('sass-loader') + '?sourceMap'
+        ]
+      }
     ],
       postcss: [autoprefixer],
       sassLoader: {

@@ -4,6 +4,7 @@ import { Row, Col } from 'react-flex-proto';
 import jquery from 'jquery';
 import _ from 'lodash';
 var pubsub = require('pubsub-js');
+require('../css/search.css');
 
 const suggestionExamples = [
   {

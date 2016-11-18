@@ -49,6 +49,9 @@ exports.crawl = function() {
         image: 'div.imageContainer img@src',
         price: '.fpGridBox .itemInfoLine .itemPrice | trim'
     }])(function (err, title) {
+            if(!title)
+              console.error("no results!");
+
             title.forEach(function (element) {
 
                 xray(element.href, '#titleInfoRow', {

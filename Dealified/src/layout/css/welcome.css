@@ -17,3 +17,7 @@
     /*left: -43px;*/
 /*}*/
 
+.flexbox .panel1 .panel-body{
+    padding: 11px 0px 0px 20px !important;
+}
+

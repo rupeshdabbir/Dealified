@@ -26,7 +26,7 @@
     text-align: center;
     padding-top: 30px;
     width:335px;
-    height:500px;
+    height:364px;
     background:#fff;
     position:absolute;
     left:-5px;
@@ -102,6 +102,7 @@
     transition:  100ms ease-out;
 }
 .stats-container{
+    height: 29%;
     background:#fff;
     position:absolute;
     /*top:386px;*/
@@ -120,7 +121,7 @@
     transition: all 200ms ease-out;
 }
 #product-card.animate .stats-container{
-    height: 344px;
+    height: 29%;
     top:272px;
     -webkit-transition: all 200ms ease-out;
     -moz-transition: all 200ms ease-out;

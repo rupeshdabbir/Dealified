@@ -1,0 +1,53 @@
+.tags-component{
+    /*top: -37px;*/
+    right: -30px;
+    top: -94px;
+    background: rgba(206, 206, 206, 0.38);
+}
+
+.slider-component{
+    margin-bottom: 40px;
+}
+
+.theme_suggestions__3bxnc > li:before {
+    content: "\f0fe"; /* FontAwesome Unicode */
+    font-family: FontAwesome;
+    margin-right: 4px;
+}
+
+.ant-steps .ant-steps-item.ant-steps-status-wait .ant-steps-title{
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+    font-weight: 500;
+}
+
+.ant-steps .ant-steps-title{
+    font-weight: 500;
+}
+.ant-steps .ant-steps-item.ant-steps-status-process .ant-steps-title{
+    font-weight: 600;
+}
+
+.ant-steps-label-horizontal{
+    padding-left: 10px ;
+    padding-right: 10px ;
+    /*padding-bottom: 17px;*/
+    border-bottom: 1px dashed rgba(140, 139, 140, 0.45);
+}
+
+.ant-steps-label-horizontal:after{
+    content: '\002702';
+    /*display: inline-block;*/
+    position: relative;
+    top: 12px;
+    left: 40px;
+    padding: 0 3px;
+    background: #f0f0f0;
+    color: #8c8b8b;
+    font-size: 18px;
+}
+.modal-body .flexbox{
+    padding-top: 11px;
+}
+.theme_inputElement__27dyY theme_filled__1UI7Z:before{
+    content: "$";
+}

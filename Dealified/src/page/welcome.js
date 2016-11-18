@@ -3,11 +3,13 @@ import { Page, Panel, Modal, Input } from 'react-blur-admin';
 import { Row, Col } from 'react-flex-proto';
 import {SearchBar} from 'src/layout/components/search-bar';
 import Card from 'src/layout/components/card';
-import AlertModal from 'src/layout/components/modal';
+import {AlertModal} from '../layout/components/modal';
+import CoverFlow from 'src/layout/components/coverflow';
 import {Button} from 'react-blur-admin';
 require('../layout/css/welcome.css');
 import $ from 'jquery';
 var pubsub = require('pubsub-js');
+
 
 
 
@@ -25,10 +27,11 @@ export class Welcome extends React.Component {
     pubsub.subscribe('searchChange', (message, data) => {
       console.log("Data is: "+data);
       this.setState({list : data});
-      this.setState({alert: false});
-
     });
-
+    pubsub.subscribe('alertClosed', (message, data) => {
+      console.log("Data is: "+data);
+      this.setState({alert: !this.state.alert});
+    });
     $(document).on("mouseover", "#product-card", function(e){
       $(e.currentTarget).addClass('animate');
     });
@@ -38,52 +41,17 @@ export class Welcome extends React.Component {
     });
   }
 
-  renderCustomizedModals() {
-    return (
-      <div>
-        <Modal type='info' buttonText='Save' title='Create an Alert!' isOpen={this.state.alert} onClose={e => this.onCloseModal('alert')}>
-          <Row>
-            <Col align='center'>
-              Please fill out the following information!
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div className='col-lg-12'>
-                <Input
-                  onChange={e => this.onTextChange('firstName', e)}
-                  label='Please enter your deal name!'
-                  value={this.state.firstName} />
-              </div>
-              {/*<div className='col-md-6'>*/}
-                {/*<Input*/}
-                  {/*onChange={e => this.onTextChange('lastName', e)}*/}
-                  {/*label='Last Name'*/}
-                  {/*value={this.state.lastName} />*/}
-              {/*</div>*/}
+  modal(){
+    this.setState({alert: !this.state.alert});
 
-            </Col>
-          </Row>
-          <div className='modal-footer'>
-            <Button title="close" className="btn btn-default btn-sm modalFooter" onClick={e => this.onCloseModal('alert')}>Close</Button>
-          </div>
-        </Modal>
-
-      </div>
-    );
+    console.log(this.state.alert);
   }
 
- renderAlertModal(){
-   this.setState({ "alert": true });
-   // pubsub.publish('alertClicked');
-   // return(
-   //   <AlertModal data={this.state.alert} />
-   // );
- }
-
-  onCloseModal(modalName) {
-    this.setState({ [modalName]: false });
+  renderModal(){
+    if(this.state.alert)
+      return
   }
+
 
   renderSearch() {
     return (
@@ -95,17 +63,15 @@ export class Welcome extends React.Component {
 
 
   renderCard() {
-
     return (
       this.state.list.map((item) => {
         return (
           <Col padding={5}>
             <Panel className="panel1">
-          <Card data={item}/>
-          </Panel>
+              <Card data={item}/>
+            </Panel>
           </Col>
         );
-
       })
     );
 
@@ -120,18 +86,17 @@ export class Welcome extends React.Component {
               {this.renderSearch()}
             </Panel>
           </Col>
-
-          {this.renderCustomizedModals()}
-
+          {this.state.alert ? <AlertModal /> : null}
           <Col padding={11} grow={false}>
-              <Button type='info' title='Create Alert!' icon='fa fa-wrench' onClick={e => this.renderAlertModal("alert")} />
+            <Button type='info' title='Create Alert!' icon='fa fa-wrench' onClick={this.modal.bind(this)} />
           </Col>
         </Row>
-
-        <h2>Search Results</h2>
+        {this.state.list.length > 0 ? <h2>Search Results</h2> : null}
         <Row>
           {this.renderCard()}
         </Row>
+        {/*<div className="content1"></div>*/}
+        <CoverFlow/>
       </Page>
     );
   }

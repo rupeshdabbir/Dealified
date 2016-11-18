@@ -27,7 +27,7 @@ export default class Card extends React.Component {
               <div className="stats-container">
                 {/*<span className="product_price">$39</span>*/}
                 <span className="product_name">{this.props.data.title}</span>
-                <p>Men's running shirt</p>
+                {/*<p>Men's running shirt</p>*/}
 
                 {/*<div className="product-options">*/}
                   {/*<strong>SIZES</strong>*/}
