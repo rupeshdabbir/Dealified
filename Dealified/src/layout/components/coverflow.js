@@ -10,7 +10,7 @@ export default class CoverFlow extends React.Component {
   constructor(){
     super();
   }
-
+ma
 render(){
   return(
   <Coverflow

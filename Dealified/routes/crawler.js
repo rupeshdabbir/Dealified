@@ -58,16 +58,33 @@ exports.crawl = function() {
                     date: '.date',
                     time: '.time'
                 })(function(err, data){
-                    if(data.date == 'Today')
-                        data.date = moment().format("MM-DD-YYYY");
+
+                    console.log(data.date);
+
+                    if(data.time == undefined){
+                      console.error("Time is Undefined, falling back to undefined time");
+                      data.time = "undefined";
+                    }
+
+                    if(data.date == undefined){
+                      console.error("Date is Undefined, falling back to undefined date");
+                      data.date = "undefined";
+                    }
+
+                    else if(data.date == 'Today'){
+                      data.date = moment().format("MM-DD-YYYY");
+                    }
                     else if(data.date == 'Yesterday')
                         data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
 
+
                     products = db.collection('products');
+
+                    console.log("Data.date is:"+data.date);
 
 
                     products.updateOne({"title": element.title},
-                        {$set: {"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}},
+                        {$set: {"title": element.title, "href": element.href,"image":element.image, "postDate": data.date , "postTime": data.time }},
                         {upsert: true}, function (err) {
                             if (err)
                                 console.log(err);
