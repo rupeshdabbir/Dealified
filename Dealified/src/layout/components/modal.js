@@ -1,12 +1,15 @@
 import React from 'react';
 import { Row, Col } from 'react-flex-proto';
-import { Page, Panel, Modal, Button, Breadcrumbs,  Select, Switch } from 'react-blur-admin';
+import { Page, Panel, Modal, Button, Breadcrumbs,  Select } from 'react-blur-admin';
 import {Chip} from 'react-toolbox/lib/chip';
 import _ from 'underscore';
 import {Autocomplete} from 'react-toolbox/lib/autocomplete';
 import {Slider} from 'react-toolbox/lib/slider';
 import StepsComponent from 'src/layout/components/steps';
-import SwitchComponent from 'src/layout/components/switch';
+// import SwitchComponent from 'src/layout/components/switch';
+import Switch from 'react-toolbox/lib/switch';
+import jquery from 'jquery';
+
 
 require('../css/modal.css');
 var pubsub = require('pubsub-js');
@@ -23,11 +26,30 @@ export class AlertModal extends React.Component {
     this.state = {
       value: '',
       tags: [],
-      slider:'200'
+      slider:'200',
+      sms: true,
+      email: true,
+      push: false
     };
     this.onChange = this.onChange.bind(this);
-  }
+    pubsub.subscribe('modalFinished', (message, data) => {
+      console.log(message);
+      console.log(data);
+ this.onSaveModal();
+      this.setState({
+        value: '',
+        tags: [],
+        slider:'200',
+        sms: true,
+        email: true,
+        push: false
+      });
 
+    });
+  }
+  handleSwitchChange = (field, value) => {
+    this.setState({...this.state, [field]: value});
+  };
   onChange(value, nvalue){
 
     var tag = this.state.tags;
@@ -51,17 +73,28 @@ export class AlertModal extends React.Component {
     pubsub.publish('alertClosed', true);
   }
 
+  componentWillUnMount(){
+
+  }
+
   onSaveModal(){
 
     jquery.post({
       type: 'POST',
-      url: '/api/searchData',
-      data: JSON.stringify(this.state.tags),
+      url: '/users/searchData',
+      data: JSON.stringify(this.state),
       dataType:'json',
+      cache: false,
       contentType: 'application/json; charset=utf-8',
       success: (data) => {
-        name = data;
-        conole.log(data);
+        // this.setState({
+        //   value: '',
+        //   tags: [],
+        //   slider:'200',
+        //   sms: true,
+        //   email: true,
+        //   push: false
+        // });
       }
     });
 
@@ -120,7 +153,25 @@ export class AlertModal extends React.Component {
   }
 
   returnSwitch(){
-    return(<SwitchComponent />);
+    return (
+      <section>
+        <Switch
+          checked={this.state.sms}
+          label="SMS Notification"
+          onChange={this.handleSwitchChange.bind(this, 'sms')}
+        />
+        <Switch
+          checked={this.state.email}
+          label="Mail notifications"
+          onChange={this.handleSwitchChange.bind(this, 'email')}
+        />
+        <Switch
+          checked={this.state.push}
+          label="Push Notification (Web/Mobile)"
+          onChange={this.handleSwitchChange.bind(this, 'push')}
+        />
+      </section>
+    );
   }
 
   // returnTags(){
@@ -136,8 +187,8 @@ export class AlertModal extends React.Component {
       onChange: this.onChange
     };
     return(
-    <div>
-        <Modal type='info' buttonText='Save' title='Create an Alert!' isOpen={true} onRequestClose={this.onCloseModal}>
+      <div>
+        <Modal type='info' buttonText='Save' title='Create an Alert!' isOpen={this.props.open} closeTimeoutMS={150} shouldCloseOnOverlayClick={true} onRequestClose={this.onCloseModal}>
           <StepsComponent
             firstStep={this.returnAutoComplete.bind(this)}
             secondStep={this.returnSlider.bind(this)}

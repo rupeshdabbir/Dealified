@@ -32,6 +32,10 @@ export class Welcome extends React.Component {
       console.log("Data is: "+data);
       this.setState({alert: !this.state.alert});
     });
+    pubsub.subscribe('modalFinished', (message, data) => {
+      // alert(false);
+      this.setState({alert: false});
+    });
     $(document).on("mouseover", "#product-card", function(e){
       $(e.currentTarget).addClass('animate');
     });
@@ -86,7 +90,7 @@ export class Welcome extends React.Component {
               {this.renderSearch()}
             </Panel>
           </Col>
-          {this.state.alert ? <AlertModal /> : null}
+          <AlertModal   open={this.state.alert}/>
           <Col padding={11} grow={false}>
             <Button type='info' title='Create Alert!' icon='fa fa-wrench' onClick={this.modal.bind(this)} />
           </Col>

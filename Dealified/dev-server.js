@@ -36,6 +36,7 @@ app.use(devMiddleware);
 app.use(require('webpack-hot-middleware')(compiler));
 
 app.use('/api', index);
+app.use('/users', users);
 app.use( function(req, res, next) {
   const reqPath = req.url;
   // find the file that the browser is looking for
