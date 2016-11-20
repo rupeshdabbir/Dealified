@@ -3,14 +3,13 @@ var router = express.Router();
 var mongo = require('./mongo');
 var redis = require('redis'); //Redis
 var client = redis.createClient(); // create a new redis client
-var changes = require('./routes/changes');
+var changes = require('./changes');
 mongo.connect(function(_db){
   db = _db;
 });
 var RETHINK_DATABASE= "delified";
 var RETHINK_TABLE = "products";
 
-var finalResult={};
 
 
  /* POST the Alert data from the UI
@@ -25,24 +24,26 @@ var finalResult={};
 router.post('/searchData', function(req, res) {
 
   var data = req.body;
-  var newData=[];
   var product = data.tags[0].toLowerCase();
+
 
   // finalResult[product] = newData;
   // newData.push(data);
 
   client.get(product, function(err, result){
+    var resultTemp = {};
+    var finalResult={};
 
-    if(result){
-      console.log("result present"+result);
-      finalResult[product].push(data);
-
-    }
-    else {
+    if(result){ //if it's already present in redis
+      resultTemp = JSON.parse(result);
+      console.log("Data already present. Appending the alert!");
+      resultTemp[product].push(data);
+      client.setex(product, 6000000, JSON.stringify(resultTemp));
+    } else {
       //Insert into Redis
       console.log("Empty ruleset, inserting into DB");
-      finalResult[product] = newData;
-      newData.push(data);
+      finalResult[product] = [];
+      finalResult[product].push(data);
       client.setex(product, 6000000, JSON.stringify(finalResult));
       changes.watch(product, RETHINK_DATABASE, RETHINK_TABLE);
     }

@@ -3,6 +3,8 @@
  */
 var amqp = require('amqplib/callback_api');
 var q = 'changesQueue';
+var mailer = require('./mailer');
+
 amqp.connect('amqp://localhost', function(err, conn) {
   conn.createChannel(function(err, ch) {
 
@@ -11,8 +13,8 @@ amqp.connect('amqp://localhost', function(err, conn) {
 
     console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
     ch.consume(q, function(msg) {
-      console.log(" [x] Received %s", msg.content
-      );
+      console.log(" [x] Received %s", msg.content);
+      mailer.sendEmail(msg.content);
     }, {noAck: true});
   });
 });

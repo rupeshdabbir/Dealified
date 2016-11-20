@@ -4,15 +4,17 @@
 var nodemailer = require('nodemailer');
 
 // create reusable transporter object using the default SMTP transport
-var transporter = nodemailer.createTransport('smtps://rdabbir12121%40gmail.com:9848022338@smtp.gmail.com');
+var transporter = nodemailer.createTransport('smtps://'+process.env.GMAIL_USER+':'+process.env.GMAIL_PASSWORD+'@smtp.gmail.com');
+
+exports.sendEmail = function(alert){
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
   from: '"Fred Foo 👥" <foo@blurdybloop.com>', // sender address
-  to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-  subject: 'Hello ✔', // Subject line
-  text: 'Hello world 🐴', // plaintext body
-  html: '<b>Hello world 🐴</b>' // html body
+  to: 'd.rupeshkumar@gmail.com', // list of receivers
+  subject: '[Rapchik] We have found your DEAL! ✔', // Subject line
+  text: alert.id, // plaintext body
+  //html: '<b>Hello world 🐴</b>' // html body
 };
 
 // send mail with defined transport object
@@ -22,3 +24,6 @@ transporter.sendMail(mailOptions, function(error, info){
   }
   console.log('Message sent: ' + info.response);
 });
+}
+
+
