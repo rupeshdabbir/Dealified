@@ -49,8 +49,11 @@ exports.crawl = function() {
         image: 'div.imageContainer img@src',
         price: '.fpGridBox .itemInfoLine .itemPrice | trim'
     }])(function (err, title) {
+
+            if(err)
+              console.error(err);
             if(!title)
-              // console.error("no results!");
+              console.error("no results!");
 
             title.forEach(function (element) {
 
@@ -59,9 +62,14 @@ exports.crawl = function() {
                     time: '.time'
                 })(function(err, data){
 
-                    // console.log(data.date);
+                    if(err)
+                      console.error(err);
 
-                    if(data.time == undefined){
+                    console.log(data);
+
+                if(!data)
+			cosole.log("no date");    
+		if(data.time == undefined){
                       console.error("Time is Undefined, falling back to undefined time");
                       data.time = "undefined";
                     }
@@ -133,6 +141,7 @@ exports.crawl = function() {
                     });
 
                 });
+
         });
 
     });

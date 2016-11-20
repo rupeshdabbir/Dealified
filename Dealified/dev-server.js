@@ -28,9 +28,9 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
 //Scheduler for running a job!
-// var j = schedule.scheduleJob('*/1 * * *', function() {
+ //var j = schedule.scheduleJob('*/1 * * *', function() {
   crawler.crawl();
-// });
+ //});
 
 app.use(devMiddleware);
 app.use(require('webpack-hot-middleware')(compiler));
@@ -57,7 +57,7 @@ app.use( function(req, res, next) {
 
 
 /* eslint-disable no-console */
-app.listen(process.env.WEBPACK_PORT, 'localhost', function(err) {
+app.listen(process.env.WEBPACK_PORT,  function(err) {
   if (err) {
     console.log(err);
     return;
