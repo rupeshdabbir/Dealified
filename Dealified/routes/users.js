@@ -1,22 +1,29 @@
 var express = require('express');
 var router = express.Router();
 var mongo = require('./mongo');
+var redis = require('redis'); //Redis
+var client = redis.createClient(); // create a new redis client
 mongo.connect(function(_db){
   db = _db;
 });
+
+var finalResult={};
+var newData=[];
+
+
 /* GET users listing. */
-router.post('/searchData', function(req, res, next) {
+router.post('/searchData', function(req, res) {
 
-  // product = db.collection('users');
-  // product.updateOne({"user": element.user},
-  //   {$set: {"deals": element.title, "href": element.href, "postDate": element.postDate, "postTime": element.postTime}}, {upsert: true}, function (err) {
-  //     if (err)
-  //       console.log(err);
-  //   });
+  var data = req.body;
+  var product = data.tags[0].toLowerCase();
 
-  console.log(req.body);
+  finalResult[product] = newData;
+  newData.push(data);
 
-  res.status(200);
+  //Insert into Redis
+  client.setex(product, 6000000, JSON.stringify(finalResult));
+
+  res.sendStatus(200);
 });
 
 module.exports = router;
