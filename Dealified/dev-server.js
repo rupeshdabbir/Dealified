@@ -11,7 +11,7 @@ const config = require('./webpack.config.dev');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var crawler = require('./routes/crawler');
-var changes = require('./routes/changes');
+
 const app = express();
 const compiler = webpack(config);
 const devMiddleware = require('webpack-dev-middleware')(compiler, {
@@ -25,7 +25,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-changes.watch('vizio', 'delified','products');
 
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
