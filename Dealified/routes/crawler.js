@@ -123,7 +123,7 @@ exports.crawl = function() {
                           conflict: "error"
                         }).run(conn,  function (err, res) {
                           if (err) console.log(err);
-                          console.log(res);
+                          // console.log(res);
                         });
                       }
 
@@ -142,7 +142,7 @@ exports.crawl = function() {
                       // }).changes().run(conn, function(err,cursor){
                       //   //cursor.each(console.log);
                       // });
-
+                      //
                       // changes.watch('vizio', 'delified','products');
                       //For Multiple Queries
 
