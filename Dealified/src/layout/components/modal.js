@@ -143,7 +143,7 @@ export class AlertModal extends React.Component {
       onChange={this.onChange.bind(this, 'value')}
       label="Enter Your Products"
       source={suggestionExamples}
-      value={this.state.value}
+      value={this.state.slider}
     />);
   }
 

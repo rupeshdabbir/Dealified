@@ -7,6 +7,7 @@ var r = require('rethinkdb');
 var db, rdb;
 //var rethinkDB = require('rethinkdb')
 var mongo = require('./mongo');
+var changes = require('./changes');
 mongo.connect(function(_db){
     db = _db;
 });
@@ -65,10 +66,10 @@ exports.crawl = function() {
                     if(err)
                       console.error(err);
 
-                    console.log(data);
+                    // console.log(data);
 
                 if(!data)
-			cosole.log("no date");    
+			cosole.log("no date");
 		if(data.time == undefined){
                       console.error("Time is Undefined, falling back to undefined time");
                       data.time = "undefined";
@@ -113,29 +114,38 @@ exports.crawl = function() {
 
                       //console.log(element);
                       if(element.title) {
-                        r.db('delified').table('products').insert({
-                          "title": element.title? element.title : "null",
+                        r.db('delified').table('products').insert({ "id": element.title? element.title : "null",
                           "href": element.href,
                           "image": element.image,
                           "postDate": data.date,
-                          "postTime": data.time
-                        }).run(conn, function (err, res) {
+                          "postTime": data.time},{
+                          returnChanges: true,
+                          conflict: "error"
+                        }).run(conn,  function (err, res) {
                           if (err) console.log(err);
-                          //console.log(res);
+                          console.log(res);
                         });
                       }
 
-                      //Checking product table for a certain table name
-                      r.db('delified').table('products').filter(function(row){
-                        return row("title").downcase().match("microsoft");
-                      }).changes().run(conn, function(err,cursor){
-                        //cursor.each(console.log);
-                      });
 
+
+                      // insert({
+                      //   "title": element.title? element.title : "null",
+                      //   "href": element.href,
+                      //   "image": element.image,
+                      //   "postDate": data.date,
+                      //   "postTime": data.time
+                      // }, {upsert: true})
+                      //Checking product table for a certain table name
+                      // r.db('delified').table('products').filter(function(row){
+                      //   return row("title").downcase().match("microsoft");
+                      // }).changes().run(conn, function(err,cursor){
+                      //   //cursor.each(console.log);
+                      // });
+
+                      // changes.watch('vizio', 'delified','products');
                       //For Multiple Queries
-                      // r.db("table").table("products").filter(function(row){
-                      //   return row("title").downcase().match("(.*)microsoft(.*)").and(row("price").lt(100));
-                      // })
+
 
 
                     });
