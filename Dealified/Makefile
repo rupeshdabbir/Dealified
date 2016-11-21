@@ -17,6 +17,9 @@ clean:
 client:
 	nf run node dev-server.js
 
+debug:
+	nf run node debug dev-server.js
+
 lint:
 	$(ESLINT) --ext .js --ext .jsx .
 

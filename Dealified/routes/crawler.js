@@ -69,8 +69,8 @@ exports.crawl = function() {
                     // console.log(data);
 
                 if(!data)
-			cosole.log("no date");
-		if(data.time == undefined){
+			          console.log("no date");
+		            if(data.time == undefined){
                       console.error("Time is Undefined, falling back to undefined time");
                       data.time = "undefined";
                     }
