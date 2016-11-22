@@ -20,12 +20,12 @@ export default class Card extends React.Component {
         <div id="product-card">
           <div id="product-front">
             <div className="shadow"></div>
-            <img src={this.props.data.image} alt="" />
+            <img src={this.props.data.image} height="200px" width="175px" alt="" />
             <div className="image_overlay"></div>
             <a href={this.props.data.href} target="_blank"><div id="view_details">Go to Deal</div></a>
             <div className="stats">
               <div className="stats-container">
-                {/*<span className="product_price">$39</span>*/}
+                <span className="product_price">{this.props.data.price}</span>
                 <span className="product_name">{this.props.data.title}</span>
                 {/*<p>Men's running shirt</p>*/}
 

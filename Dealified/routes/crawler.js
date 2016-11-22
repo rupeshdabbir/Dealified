@@ -4,6 +4,7 @@
 
 var Xray = require('x-ray');
 var r = require('rethinkdb');
+var imageSearch = require('node-google-image-search');
 var db, rdb;
 //var rethinkDB = require('rethinkdb')
 var mongo = require('./mongo');
@@ -17,6 +18,7 @@ mongo.connect(function(_db){
 // })
 
 var moment = require('moment');
+// var client = new ImagesClient('000194609912026653874:3qji0om58ew', 'AIzaSyB2sYHPi8eUaOhjQO048E-aFJrdLB0QCSo');
 
 
 
@@ -58,110 +60,140 @@ exports.crawl = function() {
             if(title) {
               title.forEach(function (element) {
 
-                xray(element.href, '#titleInfoRow', {
-                  date: '.date',
-                  time: '.time'
-                })(function (err, data) {
+               if(element.title) {
+                 xray(element.href, '#titleInfoRow', {
+                   date: '.date',
+                   time: '.time'
+                 })(function (err, data) {
 
-                  if (err)
-                    console.error(err);
+                   if (err)
+                     console.error(err);
 
-                  // console.log(data);
+                   // console.log(data);
 
-                  if (!data)
-                    console.log("no date");
+                   if (!data)
+                     console.log("no date");
 
-                  if (data) {
-                    if (data.time == undefined) {
-                      console.error("Time is Undefined, falling back to undefined time");
-                      data.time = "undefined";
-                    }
+                   if (data) {
+                     if (data.time == undefined) {
+                       console.error("Time is Undefined, falling back to undefined time");
+                       data.time = "undefined";
+                     }
 
-                    if (data.date == undefined) {
-                      console.error("Date is Undefined, falling back to undefined date");
-                      data.date = "undefined";
-                    }
+                     if (data.date == undefined) {
+                       console.error("Date is Undefined, falling back to undefined date");
+                       data.date = "undefined";
+                     }
 
-                    else if (data.date == 'Today') {
-                      data.date = moment().format("MM-DD-YYYY");
-                    }
-                    else if (data.date == 'Yesterday')
-                      data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
-
-
-                    products = db.collection('products');
-
-                    // console.log("Data.date is:"+data.date);
+                     else if (data.date == 'Today') {
+                       data.date = moment().format("MM-DD-YYYY");
+                     }
+                     else if (data.date == 'Yesterday')
+                       data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
 
 
-                    products.updateOne({"title": element.title},
-                      {
-                        $set: {
-                          "title": element.title,
-                          "href": element.href,
-                          "image": element.image,
-                          "postDate": data.date,
-                          "postTime": data.time
-                        }
-                      },
-                      {upsert: true}, function (err) {
-                        if (err)
-                          console.log(err);
-                      });
+                     products = db.collection('products');
+                     // console.log(element.title);
+                     // console.log("Data.date is:"+data.date);
 
-                    //rethinkDB
-                    // rdb.db('delified').table('products').insert({"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}).run(conn, function(err, res)
-                    // {
-                    //   if(err) throw err;
-                    //   console.log(res);
-                    // });
-
-                    r.connect({host: 'localhost', port: 28015}, function (err, conn) {
-                      if (err) throw err;
-                      // r.db('delified').tableCreate('products').run(conn, function(err, res) {
-                      //   if(err) throw err;
-                      //   console.log(res);
-
-                      //console.log(element);
-                      if (element.title) {
-                        r.db('delified').table('products').insert({
-                          "id": element.title ? element.title : "null",
-                          "href": element.href,
-                          "image": element.image,
-                          "postDate": data.date,
-                          "postTime": data.time
-                        }, {
-                          returnChanges: true,
-                          conflict: "error"
-                        }).run(conn, function (err, res) {
-                          if (err) console.log(err);
-                          // console.log(res);
-                        });
-                      }
+                    element.price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title']
+                     imageSearch(element.title, function (results) {
+                       // _do something with results_;
 
 
-                      // insert({
-                      //   "title": element.title? element.title : "null",
-                      //   "href": element.href,
-                      //   "image": element.image,
-                      //   "postDate": data.date,
-                      //   "postTime": data.time
-                      // }, {upsert: true})
-                      //Checking product table for a certain table name
-                      // r.db('delified').table('products').filter(function(row){
-                      //   return row("title").downcase().match("microsoft");
-                      // }).changes().run(conn, function(err,cursor){
-                      //   //cursor.each(console.log);
-                      // });
-                      //
-                      // changes.watch('vizio', 'delified','products');
-                      //For Multiple Queries
+                       console.log("in");
+                       if(results.items != undefined) {
+                         console.log(results.items[0].link);
+                         /*
+                          [{
+                          "url": "http://steveangello.com/boss.jpg",
+                          "type": "image/jpeg",
+                          "width": 1024,
+                          "height": 768,
+                          "size": 102451,
+                          "thumbnail": {
+                          "url": "http://steveangello.com/thumbnail.jpg",
+                          "width": 512,
+                          "height": 512
+                          }
+                          }]
+                          */
+                         element.image = results.items[0].link;
 
 
-                    });
-                  }
-                });
+                         products.updateOne({"title": element.title},
+                           {
+                             $set: {
+                               "title": element.title,
+                               "href": element.href,
+                               "image": element.image,
+                               "price": element.price[0],
+                               "postDate": data.date,
+                               "postTime": data.time
+                             }
+                           },
+                           {upsert: true}, function (err) {
+                             if (err)
+                               console.log(err);
+                           });
 
+
+                         //rethinkDB
+                         // rdb.db('delified').table('products').insert({"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}).run(conn, function(err, res)
+                         // {
+                         //   if(err) throw err;
+                         //   console.log(res);
+                         // });
+
+                         r.connect({host: 'localhost', port: 28015}, function (err, conn) {
+                           if (err) throw err;
+                           // r.db('delified').tableCreate('products').run(conn, function(err, res) {
+                           //   if(err) throw err;
+                           //   console.log(res);
+
+                           //console.log(element);
+                           if (element.title) {
+                             r.db('delified').table('products').insert({
+                               "id": element.title ? element.title : "null",
+                               "href": element.href,
+                               "image": element.image,
+                               "price": element.price[0],
+                               "postDate": data.date,
+                               "postTime": data.time
+                             }, {
+                               returnChanges: true,
+                               conflict: "error"
+                             }).run(conn, function (err, res) {
+                               if (err) console.log(err);
+                               // console.log(res);
+                             });
+                           }
+
+
+                           // insert({
+                           //   "title": element.title? element.title : "null",
+                           //   "href": element.href,
+                           //   "image": element.image,
+                           //   "postDate": data.date,
+                           //   "postTime": data.time
+                           // }, {upsert: true})
+                           //Checking product table for a certain table name
+                           // r.db('delified').table('products').filter(function(row){
+                           //   return row("title").downcase().match("microsoft");
+                           // }).changes().run(conn, function(err,cursor){
+                           //   //cursor.each(console.log);
+                           // });
+                           //
+                           // changes.watch('vizio', 'delified','products');
+                           //For Multiple Queries
+
+
+                         });
+                       }
+                     }, 0, 1);
+                   }
+                 });
+               }
               });
             }
     });
