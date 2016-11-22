@@ -15,6 +15,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
 
 });
 exports.watch = function(product, database, table){
+  const title = product;
   r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
     if (err) throw err;
     r.db(database).table(table).filter(function (row) {
@@ -23,10 +24,11 @@ exports.watch = function(product, database, table){
 
       cursor.each(function(err, row){
 
-        var product = {"product": row.new_val};
+        var request = {};
+         request[title] = row.new_val;
         ch.assertQueue(q, {durable: false});
         // Note: on Node 6 Buffer.from(msg) should be used
-        ch.sendToQueue(q, new Buffer(JSON.stringify(product)));
+        ch.sendToQueue(q, new Buffer(JSON.stringify(request)));
       });
 
 

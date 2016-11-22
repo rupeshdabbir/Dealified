@@ -16,7 +16,7 @@ exports.sendSMS = function(alert){
   console.log("Sending SMS...!!");
 
 client.messages.create({
-   body: message['product'].href,
+   body: message,
   //body: "testHello",
   to: '+19139536869',  // Text this number
   from: '+19132861044' // From a valid Twilio number

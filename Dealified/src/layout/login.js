@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
+import jquery from 'jquery';
 
 class Login extends React.Component {
   static propTypes = {
@@ -17,13 +18,16 @@ class Login extends React.Component {
   componentWillMount() {
     this.lock = new Auth0Lock(process.env.AUTH0_PUB_KEY, process.env.AUTH0_DOMAIN);
     this.setIdToken();
-  }
 
+
+  }
+componentDidMount(){
+  jquery('.a0-emailPassword').remove();
+}
   setIdToken() {
     const idToken = this.getIdToken();
     if (idToken) {
       this.setState({idToken});
-
       if (this.props.location.query && this.props.location.query.redirectUri) {
         this.props.router.replace(decodeURIComponent(this.props.location.query.redirectUri));
       } else {

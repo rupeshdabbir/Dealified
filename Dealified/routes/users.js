@@ -24,6 +24,7 @@ var RETHINK_TABLE = "products";
 router.post('/searchData', function(req, res) {
 
   var data = req.body;
+  console.log(data);
   var product = data.tags[0].toLowerCase();
 
 

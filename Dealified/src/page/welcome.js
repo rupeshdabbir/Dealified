@@ -7,6 +7,7 @@ import {AlertModal} from '../layout/components/modal';
 import CoverFlow from 'src/layout/components/coverflow';
 import {Button} from 'react-blur-admin';
 require('../layout/css/welcome.css');
+import eventBus from 'src/lib/event-bus';
 import $ from 'jquery';
 var pubsub = require('pubsub-js');
 
@@ -19,9 +20,31 @@ export class Welcome extends React.Component {
     super();
     this.state = {
       list:[],
-      alert:false
+      alert:false,
+      useremail:'',
+      username:''
     };
   }
+
+  componentWillMount(){
+
+    this.lock = new Auth0Lock(process.env.AUTH0_PUB_KEY, process.env.AUTH0_DOMAIN);
+   const idToken = localStorage.getItem('userToken');
+    this.lock.getProfile(idToken, function (err, profile) {
+      if (err) {
+        console.log("Error loading the Profile", err);
+        return;
+      }
+      console.log(profile.name);
+      console.log(profile.email);
+      this.setState({useremail: profile.email});
+      this.setState({username: profile.name});
+
+      console.log(this.state);
+      // localStorage.setItem('userEmail', profile);
+    }.bind(this));
+  }
+
 
   componentDidMount(){
     pubsub.subscribe('searchChange', (message, data) => {
@@ -46,6 +69,7 @@ export class Welcome extends React.Component {
   }
 
   modal(){
+    eventBus.emit('alertRequested');
     this.setState({alert: !this.state.alert});
 
     console.log(this.state.alert);
@@ -90,7 +114,7 @@ export class Welcome extends React.Component {
               {this.renderSearch()}
             </Panel>
           </Col>
-          <AlertModal   open={this.state.alert}/>
+          <AlertModal   open={this.state.alert} email={this.state.useremail} name={this.state.username}/>
           <Col padding={11} grow={false}>
             <Button type='info' title='Create Alert!' icon='fa fa-wrench' onClick={this.modal.bind(this)} />
           </Col>

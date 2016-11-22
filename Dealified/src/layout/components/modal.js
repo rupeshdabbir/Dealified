@@ -25,28 +25,46 @@ export class AlertModal extends React.Component {
     super();
     this.state = {
       value: '',
-      tags: [],
-      slider:'200',
+      username: '',
+      useremail:'',
+      phone:'',
+      tags: '',
+      priceRange:'200',
       sms: true,
       email: true,
       push: false
     };
+
+    // console.log(this.props.profile);
     this.onChange = this.onChange.bind(this);
+    this.onCloseModal = this.onCloseModal.bind(this);
     pubsub.subscribe('modalFinished', (message, data) => {
       console.log(message);
       console.log(data);
- this.onSaveModal();
-      this.setState({
-        value: '',
-        tags: [],
-        slider:'200',
-        sms: true,
-        email: true,
-        push: false
-      });
-
+      this.onSaveModal();
     });
   }
+
+  componentWillMount(){
+    this.lock = new Auth0Lock(process.env.AUTH0_PUB_KEY, process.env.AUTH0_DOMAIN);
+    const idToken = localStorage.getItem('userToken');
+    this.lock.getProfile(idToken, function (err, profile) {
+      if (err) {
+        console.log("Error loading the Profile", err);
+        return;
+      }
+      console.log(profile.name);
+      console.log(profile.email);
+      this.setState({useremail: profile.email});
+      this.setState({username: profile.name});
+
+      console.log(this.state);
+      // localStorage.setItem('userEmail', profile);
+    }.bind(this));
+    console.log(this.state.username);
+
+  }
+
   handleSwitchChange = (field, value) => {
     this.setState({...this.state, [field]: value});
   };
@@ -56,12 +74,12 @@ export class AlertModal extends React.Component {
     if(nvalue.length >0 && nvalue[0].split('$')[1]) {
       var splitVal = nvalue[0].split('$')[1];
       if( _.indexOf(tag, splitVal) == -1)
-        tag.push(splitVal);
+        tag = splitVal;
     }
     else {
       nvalue[0] = nvalue[0];
       if(_.indexOf(tag, nvalue[0]) == -1)
-        tag.push(nvalue[0]);
+        tag = nvalue[0];
     }
     this.setState({tags: tag});
 
@@ -70,6 +88,8 @@ export class AlertModal extends React.Component {
 
 
   onCloseModal() {
+    var tag = '';
+    this.setState({tags: tag});
     pubsub.publish('alertClosed', true);
   }
 
@@ -78,6 +98,7 @@ export class AlertModal extends React.Component {
   }
 
   onSaveModal(){
+    console.log(this.state);
 
     jquery.post({
       type: 'POST',
@@ -99,9 +120,9 @@ export class AlertModal extends React.Component {
     });
 
   }
-  handleChange(slider, value){
+  handleChange(priceRange, value){
     const newState = {};
-    newState[slider] = value;
+    newState[priceRange] = value;
     this.setState(newState);
   };
 
@@ -112,24 +133,22 @@ export class AlertModal extends React.Component {
   }
 
   renderTags(){
+    let tag = this.state.tags;
     return(
-      this.state.tags.map((tag)=>{
-        return(
           <Chip className="tags-component" deletable onDeleteClick={e => this.handleDeleteClick({tag})}>
             {tag}
           </Chip>
-        );
-      })
+      
     )
   }
 
   handleDeleteClick (value){
-    let tag = this.state.tags;
-    let newtag = tag.filter(function(el) {
-      return el !== value.tag;
-    });
+    // let tag = this.state.tags;
+    // let newtag = tag.filter(function(el) {
+    //   return el !== value.tag;
+    // });
     this.setState({
-      tags: newtag
+      tags: ''
     });
   };
 
@@ -143,12 +162,12 @@ export class AlertModal extends React.Component {
       onChange={this.onChange.bind(this, 'value')}
       label="Enter Your Products"
       source={suggestionExamples}
-      value={this.state.slider}
+      value={this.state.value}
     />);
   }
 
   returnSlider(){
-    return(<Slider className="slider-component" pinned snaps min={0} max={1000} step={200} editable value={this.state.slider} onChange={this.handleChange.bind(this, 'slider')} />
+    return(<Slider className="slider-component" pinned snaps min={0} max={1000} step={200} editable value={this.state.priceRange} onChange={this.handleChange.bind(this, 'priceRange')} />
     );
   }
 
@@ -187,8 +206,11 @@ export class AlertModal extends React.Component {
       onChange: this.onChange
     };
     return(
+
       <div>
+        {this.lock.show}
         <Modal type='info' buttonText='Save' title='Create an Alert!' isOpen={this.props.open} closeTimeoutMS={150} shouldCloseOnOverlayClick={true} onRequestClose={this.onCloseModal}>
+          <i className="fa fa-times fa-3" style={{"right": "-98%", "position": "relative", "top": "-48px", "fontSize":"17px", "color":"white"}} aria-hidden="true" onClick={this.onCloseModal}></i>
           <StepsComponent
             firstStep={this.returnAutoComplete.bind(this)}
             secondStep={this.returnSlider.bind(this)}

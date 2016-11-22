@@ -29,19 +29,22 @@ class AppLayout extends React.Component {
     }
 
     eventBus.on('logout', () => this.onLogout());
+    eventBus.on('alertRequested', () => this.checkLogin());
   }
 
-  componentDidMount() {
+
+  checkLogin() {
     if (! this.state.idToken && process.env.AUTH0_PUB_KEY) {
       return this.redirectToLogin();
     }
     return this.setUser();
   }
 
+
   onLogout() {
     localStorage.removeItem('userToken');
     this.setState({ idToken: null, user: null });
-    return this.redirectToLogin();
+    // return this.redirectToLogin();
   }
 
   redirectToLogin() {

@@ -55,36 +55,38 @@ exports.crawl = function() {
               console.error(err);
             if(!title)
               console.error("no results!");
-
-            title.forEach(function (element) {
+            if(title) {
+              title.forEach(function (element) {
 
                 xray(element.href, '#titleInfoRow', {
-                    date: '.date',
-                    time: '.time'
-                })(function(err, data){
+                  date: '.date',
+                  time: '.time'
+                })(function (err, data) {
 
-                    if(err)
-                      console.error(err);
+                  if (err)
+                    console.error(err);
 
-                    // console.log(data);
+                  // console.log(data);
 
-                if(!data)
-			          console.log("no date");
-		            if(data.time == undefined){
+                  if (!data)
+                    console.log("no date");
+
+                  if (data) {
+                    if (data.time == undefined) {
                       console.error("Time is Undefined, falling back to undefined time");
                       data.time = "undefined";
                     }
 
-                    if(data.date == undefined){
+                    if (data.date == undefined) {
                       console.error("Date is Undefined, falling back to undefined date");
                       data.date = "undefined";
                     }
 
-                    else if(data.date == 'Today'){
+                    else if (data.date == 'Today') {
                       data.date = moment().format("MM-DD-YYYY");
                     }
-                    else if(data.date == 'Yesterday')
-                        data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
+                    else if (data.date == 'Yesterday')
+                      data.date = moment().subtract(1, 'days').format("MM-DD-YYYY");
 
 
                     products = db.collection('products');
@@ -93,11 +95,19 @@ exports.crawl = function() {
 
 
                     products.updateOne({"title": element.title},
-                        {$set: {"title": element.title, "href": element.href,"image":element.image, "postDate": data.date , "postTime": data.time }},
-                        {upsert: true}, function (err) {
-                            if (err)
-                                console.log(err);
-                        });
+                      {
+                        $set: {
+                          "title": element.title,
+                          "href": element.href,
+                          "image": element.image,
+                          "postDate": data.date,
+                          "postTime": data.time
+                        }
+                      },
+                      {upsert: true}, function (err) {
+                        if (err)
+                          console.log(err);
+                      });
 
                     //rethinkDB
                     // rdb.db('delified').table('products').insert({"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}).run(conn, function(err, res)
@@ -106,27 +116,28 @@ exports.crawl = function() {
                     //   console.log(res);
                     // });
 
-                    r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
-                      if(err) throw err;
+                    r.connect({host: 'localhost', port: 28015}, function (err, conn) {
+                      if (err) throw err;
                       // r.db('delified').tableCreate('products').run(conn, function(err, res) {
                       //   if(err) throw err;
                       //   console.log(res);
 
                       //console.log(element);
-                      if(element.title) {
-                        r.db('delified').table('products').insert({ "id": element.title? element.title : "null",
+                      if (element.title) {
+                        r.db('delified').table('products').insert({
+                          "id": element.title ? element.title : "null",
                           "href": element.href,
                           "image": element.image,
                           "postDate": data.date,
-                          "postTime": data.time},{
+                          "postTime": data.time
+                        }, {
                           returnChanges: true,
                           conflict: "error"
-                        }).run(conn,  function (err, res) {
+                        }).run(conn, function (err, res) {
                           if (err) console.log(err);
                           // console.log(res);
                         });
                       }
-
 
 
                       // insert({
@@ -147,13 +158,12 @@ exports.crawl = function() {
                       //For Multiple Queries
 
 
-
                     });
-
+                  }
                 });
 
-        });
-
+              });
+            }
     });
 
     xray('https://slickdeals.net/forums/forumdisplay.php?f=9', '[id^=sdpostrow_]', [{
