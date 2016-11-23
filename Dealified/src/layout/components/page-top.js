@@ -24,84 +24,10 @@ export class PageTop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications: [{
-        user: {
-          name: 'Ashley',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '02/13/95 9:00',
-        relativeTime: moment('02/13/95').fromNow(),
-      },
-      {
-        user: {
-          name: 'Nick',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '07/13/16 12:00',
-        relativeTime: moment('07/13/16 12:00').fromNow(),
-      },
-      {
-        user: {
-          name: 'Matt',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '04/20/15 9:00',
-        relativeTime: moment('04/20/15 9:00').fromNow(),
-      },
-      {
-        user: {
-          name: 'Jon',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '07/19/16 8:00',
-        relativeTime: moment('07/19/16 8:00').fromNow(),
-      },
-      {
-        user: {
-          name: 'Jacob',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '05/23/16 2:00',
-        relativeTime: moment('05/23/16 2:00').fromNow(),
-      },
-      {
-        user: {
-          name: 'Jason',
-          picture: Person,
-        },
-        subject: 'This is a notification alert',
-        timeStamp: '05/01/16 4:00',
-        relativeTime: moment('05/01/16 4:00').fromNow(),
-      }],
-      messages: [{
-        user: {
-          name: 'Ashley',
-          picture: Person,
-        },
-        subject: 'This is a message alert',
-        timeStamp: '02/13/95 9:00',
-        relativeTime: moment('02/13/16').fromNow(),
-      },
-      {
-        user: {
-          name: 'Nick',
-          picture: Person,
-        },
-        subject: 'This is a message alert',
-        timeStamp: '07/13/16 12:00',
-        relativeTime: moment('07/13/16 12:00').fromNow(),
-      }],
-    };
-  }
-
-  state = {
-    isMenuOpen: false,
-    appName: process.env.APP_NAME,
+      isMenuOpen: false,
+      appName: process.env.APP_NAME,
+      loggedOut:
+    }
   }
 
   componentWillMount() {
@@ -166,8 +92,6 @@ export class PageTop extends React.Component {
           </a>
           <ul className="top-dropdown-menu profile-dropdown dropdown-menu">
             <li><i className="dropdown-arr"></i></li>
-            <li><Link to="/"><i className="fa fa-user"></i>Profile</Link></li>
-            <li><Link to="/'"><i className="fa fa-cog"></i>Settings</Link></li>
             <li>
               <a href={this.props.location.pathname} className="signout" onClick={e => this.onLogout()}>
                 <i className="fa fa-power-off"></i>Sign out

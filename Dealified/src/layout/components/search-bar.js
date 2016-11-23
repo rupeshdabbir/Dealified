@@ -36,7 +36,7 @@ const suggestionExamples = [
   },
   {
     text: 'tv',
-  },
+  }
 ];
 
 export let name;

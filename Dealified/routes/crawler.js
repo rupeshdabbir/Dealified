@@ -46,6 +46,76 @@ exports.crawl = function() {
   // });
 
   var start = new Date();
+  xray('https://www.dealighted.com/main/page-1', '.dealBody ', [{
+    title: '.dealTitle > a ',
+    href: '.dealTitle > a@href',
+    price: '.dealBody .price',
+    image:'.siddharth'
+  }])(function (err, title) {
+    // console.log(title);
+      title.forEach(function (element) {
+
+        // console.log(element);
+
+        product = db.collection('products');
+        product.findOne({"title":element.title}, function(err, find) {
+          
+          console.log('in mongo');
+
+          if(find == null) {
+
+            imageSearch(element.title, function (results) {
+              console.log('in image');
+
+              if (results.items != undefined) {
+                var price = element.price || 'Please check the title';
+                console.log('in deals'+ results.items[0].link);
+                // console.log(results);
+                var image = results.items[0].link;
+               
+                product.updateOne({"title": element.title},
+                  {
+                    $set: {
+                      "title": element.title,
+                      "href": element.href,
+                      "image": image,
+                      "price": price
+                    }
+                  }, {upsert: true}, function (err) {
+                    if (err)
+                      console.log(err);
+                  });
+
+                r.connect({host: 'localhost', port: 28015}, function (err, conn) {
+                  if (err) throw err;
+                  // r.db('delified').tableCreate('products').run(conn, function(err, res) {
+                  //   if(err) throw err;
+                  //   console.log(res);
+
+                  //console.log(element);
+                  if (element.title) {
+                    r.db('delified').table('products').insert({
+                      "id": element.title ? element.title : "null",
+                      "href": element.href,
+                      "price": price,
+                    }, {
+                      returnChanges: true,
+                      conflict: "error"
+                    }).run(conn, function (err, res) {
+                      if (err) console.log(err);
+                      // console.log(res);
+                    });
+                  }
+
+                });
+              }
+            }, 0, 1);
+          }
+        });
+
+      })
+
+    });
 
   xray('https://slickdeals.net', '.fpGridBox', [{
     title: '.itemImageAndName a.itemImageLink@title',
@@ -137,7 +207,6 @@ exports.crawl = function() {
                           r.db('delified').table('products').insert({
                             "id": element.title ? element.title : "null",
                             "href": element.href,
-                            "image": element.image,
                             "price": element.price[0],
                             "postDate": data.date,
                             "postTime": data.time
@@ -169,11 +238,11 @@ exports.crawl = function() {
         postDate: '[id^=td_postdate_] .smallfont | trim'
     }])
         .paginate('.search_pagenav_text@href')
-        .limit(20)(function (err, title) {
+        .limit(10)(function (err, title) {
                 title.forEach(function (element) {
 
-                  product = db.collection('deals');
-                    products.findOne({"title":element.title}, function(err, find) {
+                  deal = db.collection('products');
+                    deal.findOne({"title":element.title}, function(err, find) {
 
                       if(find == null) {
 
@@ -182,7 +251,7 @@ exports.crawl = function() {
                           if (results.items != undefined) {
                             var price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
                              console.log('in deals'+ results.items[0].link);
-                            console.log(results);
+                            // console.log(results);
                             var image = results.items[0].link;
                             var a = element.postDate.split('\n');
                             element["postTime"] = a[1].trim();
@@ -208,6 +277,30 @@ exports.crawl = function() {
                                 if (err)
                                   console.log(err);
                               });
+                            r.connect({host: 'localhost', port: 28015}, function (err, conn) {
+                              if (err) throw err;
+                              // r.db('delified').tableCreate('products').run(conn, function(err, res) {
+                              //   if(err) throw err;
+                              //   console.log(res);
+
+                              //console.log(element);
+                              if (element.title) {
+                                r.db('delified').table('products').insert({
+                                  "id": element.title ? element.title : "null",
+                                  "href": element.href,
+                                  "price": price[0],
+                                  "postDate": element.postDate,
+                                  "postTime": element.postTime
+                                }, {
+                                  returnChanges: true,
+                                  conflict: "error"
+                                }).run(conn, function (err, res) {
+                                  if (err) console.log(err);
+                                  // console.log(res);
+                                });
+                              }
+
+                            });
                           }
                         }, 0, 1);
                       }
@@ -234,12 +327,16 @@ exports.searchData = function(req,res){
   //console.log(data);
 
   var regex = { title: { $regex: ''+data+'', $options: 'i' } };
-  //console.log(regex);
-
-  //db.collection('deals').find(regex).limit(10).toArray(function(err, deals){
-  db.collection('products').find(regex).limit(10).toArray(function(err, products){
-    var data = products;
+  // //console.log(regex);
+  // db.collection('dealighted').find(regex).limit(10).toArray(function(err, delighted){
+  //   var data = delighted;
+  //  
+  // db.collection('deals').find(regex).limit(10).toArray(function(err, hotDeals){
+  // data = delighted.concat(hotDeals);
+  db.collection('products').find(regex).limit(10).toArray(function(err, slickDeals){
+     data = slickDeals;
     res.status(200).json(data);
   });
-  //});
+  // });
+  // });
 }
