@@ -13,7 +13,7 @@ exports.sendSMSFree = function(toNumber, link){
     setTimeout(() => {
       horseman
         .open('http://www.textport.com/')
-        .type('input[id="ctl00_BodyContent1_TextBoxMobileTo"]', toNumber)
+        .type('input[id="ctl00_BodyContent1_TextBoxMobileTo"]', '+19139536869')
         .type('input[id="ctl00_BodyContent1_TextBoxFrom"]', 'noreply@rapchik.online')
         .type('textarea[id="ctl00_BodyContent1_TextBoxMessage"]', link)
         .click('[name="ctl00$BodyContent1$ButtonSubmit"]')
