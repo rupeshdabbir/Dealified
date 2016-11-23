@@ -1,3 +1,7 @@
+/**
+ * Created by rdabbir on 11/20/16.
+ */
+
 var express = require('express');
 var router = express.Router();
 var mongo = require('./mongo');
@@ -25,7 +29,7 @@ router.post('/searchData', function(req, res) {
 
   var data = req.body;
   console.log(data);
-  var product = data.tags[0].toLowerCase();
+  var product = data.tags.toLowerCase();
 
 
   // finalResult[product] = newData;

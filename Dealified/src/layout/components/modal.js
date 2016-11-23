@@ -30,7 +30,7 @@ export class AlertModal extends React.Component {
       phone:'',
       tags: '',
       priceRange:'200',
-      sms: true,
+      sms: false,
       email: true,
       push: false
     };
@@ -135,10 +135,10 @@ export class AlertModal extends React.Component {
   renderTags(){
     let tag = this.state.tags;
     return(
-          <Chip className="tags-component" deletable onDeleteClick={e => this.handleDeleteClick({tag})}>
-            {tag}
-          </Chip>
-      
+      <Chip className="tags-component" deletable onDeleteClick={e => this.handleDeleteClick({tag})}>
+        {tag}
+      </Chip>
+
     )
   }
 

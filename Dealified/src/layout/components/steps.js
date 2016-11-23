@@ -33,6 +33,8 @@ export default class StepsComponent extends React.Component {
     };
   }
   next() {
+    if(this.state.current == 0)
+      pubsub.publishSync('nextPressed', true);
     const current = this.state.current + 1;
     this.setState({ current });
   }
