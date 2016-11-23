@@ -4,7 +4,8 @@
 
 var Xray = require('x-ray');
 var r = require('rethinkdb');
-var imageSearch = require('node-google-image-search');
+// var imageSearch = require('node-google-image-search');
+var imageSearch = require('../src/lib/node-google-image-search')
 var db, rdb;
 //var rethinkDB = require('rethinkdb')
 var mongo = require('./mongo');
