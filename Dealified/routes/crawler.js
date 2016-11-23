@@ -96,101 +96,65 @@ exports.crawl = function() {
                      // console.log(element.title);
                      // console.log("Data.date is:"+data.date);
 
-                    element.price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title']
-                     imageSearch(element.title, function (results) {
+                    element.price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
+                     
+                     
                        // _do something with results_;
 
+                  products.findOne({"title":element.title}, function(err, find){
+                    if(find == null) {
+                       imageSearch(element.title, function (results) {
 
-                       console.log("in");
-                       if(results.items != undefined) {
-                         console.log(results.items[0].link);
-                         /*
-                          [{
-                          "url": "http://steveangello.com/boss.jpg",
-                          "type": "image/jpeg",
-                          "width": 1024,
-                          "height": 768,
-                          "size": 102451,
-                          "thumbnail": {
-                          "url": "http://steveangello.com/thumbnail.jpg",
-                          "width": 512,
-                          "height": 512
+                      if (results.items != undefined) {
+                        console.log(results.items[0].link);
+
+                        element.image = results.items[0].link;
+                        products.updateOne({"title": element.title},
+                          {
+                            $set: {
+                              "title": element.title,
+                              "href": element.href,
+                              "image": element.image,
+                              "price": element.price[0],
+                              "postDate": data.date,
+                              "postTime": data.time
+                            }
+                          },
+                          {upsert: true}, function (err) {
+                            if (err)
+                              console.log(err);
+                          });
+
+                        r.connect({host: 'localhost', port: 28015}, function (err, conn) {
+                          if (err) throw err;
+                          // r.db('delified').tableCreate('products').run(conn, function(err, res) {
+                          //   if(err) throw err;
+                          //   console.log(res);
+
+                          //console.log(element);
+                          if (element.title) {
+                            r.db('delified').table('products').insert({
+                              "id": element.title ? element.title : "null",
+                              "href": element.href,
+                              "image": element.image,
+                              "price": element.price[0],
+                              "postDate": data.date,
+                              "postTime": data.time
+                            }, {
+                              returnChanges: true,
+                              conflict: "error"
+                            }).run(conn, function (err, res) {
+                              if (err) console.log(err);
+                              // console.log(res);
+                            });
                           }
-                          }]
-                          */
-                         element.image = results.items[0].link;
+                          
+                        });
+                      }
+                       }, 0, 1);
+                    }
+                  });
 
-
-                         products.updateOne({"title": element.title},
-                           {
-                             $set: {
-                               "title": element.title,
-                               "href": element.href,
-                               "image": element.image,
-                               "price": element.price[0],
-                               "postDate": data.date,
-                               "postTime": data.time
-                             }
-                           },
-                           {upsert: true}, function (err) {
-                             if (err)
-                               console.log(err);
-                           });
-
-
-                         //rethinkDB
-                         // rdb.db('delified').table('products').insert({"title": element.title, "href": element.href,"image":element.image, "postDate": data.date, "postTime": data.time}).run(conn, function(err, res)
-                         // {
-                         //   if(err) throw err;
-                         //   console.log(res);
-                         // });
-
-                         r.connect({host: 'localhost', port: 28015}, function (err, conn) {
-                           if (err) throw err;
-                           // r.db('delified').tableCreate('products').run(conn, function(err, res) {
-                           //   if(err) throw err;
-                           //   console.log(res);
-
-                           //console.log(element);
-                           if (element.title) {
-                             r.db('delified').table('products').insert({
-                               "id": element.title ? element.title : "null",
-                               "href": element.href,
-                               "image": element.image,
-                               "price": element.price[0],
-                               "postDate": data.date,
-                               "postTime": data.time
-                             }, {
-                               returnChanges: true,
-                               conflict: "error"
-                             }).run(conn, function (err, res) {
-                               if (err) console.log(err);
-                               // console.log(res);
-                             });
-                           }
-
-
-                           // insert({
-                           //   "title": element.title? element.title : "null",
-                           //   "href": element.href,
-                           //   "image": element.image,
-                           //   "postDate": data.date,
-                           //   "postTime": data.time
-                           // }, {upsert: true})
-                           //Checking product table for a certain table name
-                           // r.db('delified').table('products').filter(function(row){
-                           //   return row("title").downcase().match("microsoft");
-                           // }).changes().run(conn, function(err,cursor){
-                           //   //cursor.each(console.log);
-                           // });
-                           //
-                           // changes.watch('vizio', 'delified','products');
-                           //For Multiple Queries
-
-
-                         });
-                       }
-                     }, 0, 1);
                    }
                  });
                }
@@ -207,24 +171,47 @@ exports.crawl = function() {
         .limit(20)(function (err, title) {
                 title.forEach(function (element) {
 
+                  product = db.collection('deals');
+                    products.findOne({"title":element.title}, function(err, find) {
+                      
+                      if(find == null) {
+                        
+                        imageSearch(element.title, function (results) {
+                          
+                          if (results.items != undefined) {
+                            var price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
+                             console.log('in deals'+ results.items[0].link);
 
-                    var a = element.postDate.split('\n');
-                    element["postTime"] = a[1].trim();
-                    if(a[0] == 'Today')
-                       element.postDate = moment().format("MM-DD-YYYY");
-                    else if(a[0] == 'Yesterday')
-                        element.postDate = moment().subtract(1, 'days').format("MM-DD-YYYY");
+                            var image = results.items[0].link;
+                            var a = element.postDate.split('\n');
+                            element["postTime"] = a[1].trim();
+                            if (a[0] == 'Today')
+                              element.postDate = moment().format("MM-DD-YYYY");
+                            else if (a[0] == 'Yesterday')
+                              element.postDate = moment().subtract(1, 'days').format("MM-DD-YYYY");
 
-                    else
-                        element.postDate = a[0];
+                            else
+                              element.postDate = a[0];
 
-                    product = db.collection('deals');
-                    product.updateOne({"title": element.title},
-    {$set: {"title": element.title, "href": element.href, "postDate": element.postDate, "postTime": element.postTime}}, {upsert: true}, function (err) {
-                        if (err)
-                            console.log(err);
+                            product.updateOne({"title": element.title},
+                              {
+                                $set: {
+                                  "title": element.title,
+                                  "href": element.href,
+                                  "image": image,
+                                  "price": price[0],
+                                  "postDate": element.postDate,
+                                  "postTime": element.postTime
+                                }
+                              }, {upsert: true}, function (err) {
+                                if (err)
+                                  console.log(err);
+                              });
+                          }
+                        }, 0, 1);
+                      }
                     });
-
+                  
                 })
 
             });
