@@ -147,17 +147,13 @@ export class AlertModal extends React.Component {
       else{
         this.setState({phone: this.state.phone});
       }
-
     }
-    if(priceRange == 'email'){
-
-        this.setState({email: value});
+   else if(priceRange == 'email'){
+      
+        this.setState({useremail: value});
         localStorage.setItem(email, value);
-
     }
-
-
-  };
+};
 
   addTag(e){
     if (e.key === 'Enter') {
