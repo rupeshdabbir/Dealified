@@ -12,9 +12,15 @@
 - Emails user when the price falls below [x]
 - Lets you find new deals.
 
-
-
-
+## Technology stack
+- MongoDB (For searching)
+- ReThinkDB 
+- Redis (For caching)
+- RabbitMQ
+- NodeJS.
+- ReactJS.
+- ES6 Javascript.
+- Webpack / Babel for React.
 
 ## Setup
 
