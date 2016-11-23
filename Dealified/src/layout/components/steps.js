@@ -31,12 +31,24 @@ export default class StepsComponent extends React.Component {
     this.state = {
       current: 0
     };
+
+    pubsub.subscribe('alertClosed', (message, data) => {
+      console.log(message);
+      console.log(data);
+
+      this.setState({current: 0});
+    });
   }
   next() {
-    if(this.state.current == 0)
-      pubsub.publishSync('nextPressed', true);
     const current = this.state.current + 1;
     this.setState({ current });
+    if(this.props.tags == ''){
+      alert('Please Enter atleast One Item');
+    }
+    else {
+      const current = this.state.current + 1;
+      this.setState({current});
+    }
   }
   prev() {
     const current = this.state.current - 1;
@@ -45,8 +57,24 @@ export default class StepsComponent extends React.Component {
 
   onFinishModal(){
     // alert('true');
-    pubsub.publishSync('modalFinished', true);
-    this.setState({ current: 0});
+
+    if(this.props.state.email || this.props.state.sms){
+
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if((this.props.state.email && !re.test(this.props.state.useremail)) || (this.props.state.sms && this.props.state.phone.length < 10) ){
+        alert('Please enter a valid Entry or Turn off the Respective notification');
+      }
+      else{
+        pubsub.publishSync('modalFinished', true);
+        this.setState({ current: 0});
+      }
+
+    }
+    else{
+      alert('Please Select One type of Notification');
+    }
+
+
   }
 
   render() {

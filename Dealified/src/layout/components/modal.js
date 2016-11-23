@@ -3,6 +3,7 @@ import { Row, Col } from 'react-flex-proto';
 import { Page, Panel, Modal, Button, Breadcrumbs,  Select } from 'react-blur-admin';
 import {Chip} from 'react-toolbox/lib/chip';
 import _ from 'underscore';
+import Input from 'react-toolbox/lib/input';
 import {Autocomplete} from 'react-toolbox/lib/autocomplete';
 import {Slider} from 'react-toolbox/lib/slider';
 import StepsComponent from 'src/layout/components/steps';
@@ -17,7 +18,8 @@ var pubsub = require('pubsub-js');
 const suggestionExamples = [
   'Vizio', 'iPad','iPhone'
 ];
-
+var userId ;
+var email = userId + 'email';
 
 export class AlertModal extends React.Component {
 
@@ -41,7 +43,11 @@ export class AlertModal extends React.Component {
     pubsub.subscribe('modalFinished', (message, data) => {
       console.log(message);
       console.log(data);
+      console.log(this.state.phone);
       this.onSaveModal();
+      var tag = '';
+      var priceRange= '200';
+      this.setState({tags: tag, priceRange: '200'});
     });
   }
 
@@ -53,13 +59,17 @@ export class AlertModal extends React.Component {
         console.log("Error loading the Profile", err);
         return;
       }
-      console.log(profile.name);
-      console.log(profile.email);
-      this.setState({useremail: profile.email});
+      console.log(profile);
+      console.log(profile);
+      profile.email?this.setState({useremail: profile.email}): this.setState({useremail: localStorage.getItem(email) });;
       this.setState({username: profile.name});
+      userId = profile.user_id;
+      if(localStorage.getItem(userId)){
+        this.setState({phone: localStorage.getItem(userId) });
+
+      }
 
       console.log(this.state);
-      // localStorage.setItem('userEmail', profile);
     }.bind(this));
     console.log(this.state.username);
 
@@ -89,7 +99,8 @@ export class AlertModal extends React.Component {
 
   onCloseModal() {
     var tag = '';
-    this.setState({tags: tag});
+    var priceRange= '200';
+    this.setState({tags: tag, priceRange: '200'});
     pubsub.publish('alertClosed', true);
   }
 
@@ -124,6 +135,28 @@ export class AlertModal extends React.Component {
     const newState = {};
     newState[priceRange] = value;
     this.setState(newState);
+
+    if(priceRange == 'phone'){
+      console.log(this.state.phone);
+      var patt1 = "^[0-9]*$";
+      var result = value.match(patt1);
+      if(result){
+        this.setState({phone: value});
+        localStorage.setItem(userId, value);
+      }
+      else{
+        this.setState({phone: this.state.phone});
+      }
+
+    }
+    if(priceRange == 'email'){
+
+        this.setState({email: value});
+        localStorage.setItem(email, value);
+
+    }
+
+
   };
 
   addTag(e){
@@ -178,15 +211,18 @@ export class AlertModal extends React.Component {
           checked={this.state.sms}
           label="SMS Notification"
           onChange={this.handleSwitchChange.bind(this, 'sms')}
-        />
+        />{this.state.sms?<Input type='tel' label='Phone' name='phone' value={this.state.phone} onChange={this.handleChange.bind(this, 'phone')} maxLength={10} />:null}
+
         <Switch
           checked={this.state.email}
           label="Mail notifications"
           onChange={this.handleSwitchChange.bind(this, 'email')}
-        />
+        />{this.state.email?<Input type='tel' label='email' name='email' value={this.state.useremail} onChange={this.handleChange.bind(this, 'email')}/>:null}
+
         <Switch
           checked={this.state.push}
-          label="Push Notification (Web/Mobile)"
+          disabled
+          label="Push Notification (Web/Mobile) *Beta"
           onChange={this.handleSwitchChange.bind(this, 'push')}
         />
       </section>
@@ -216,6 +252,7 @@ export class AlertModal extends React.Component {
             secondStep={this.returnSlider.bind(this)}
             thirdStep={this.returnSwitch.bind(this)}
             renderTags={this.renderTags.bind(this)}
+            state={this.state}
           />
           {/*{this.renderTags()}*/}
           <Row>

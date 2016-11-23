@@ -163,57 +163,57 @@ exports.crawl = function() {
     }
   });
 
-  xray('https://slickdeals.net/forums/forumdisplay.php?f=9', '[id^=sdpostrow_]', [{
-    title: '[id^=td_threadtitle_] .threadtitleline > a | trim',
-    href: '[id^=td_threadtitle_] .threadtitleline > a@href | trim',
-    postDate: '[id^=td_postdate_] .smallfont | trim'
-  }])
-    .paginate('.search_pagenav_text@href')
-    .limit(20)(function (err, title) {
-      title.forEach(function (element) {
+    xray('https://slickdeals.net/forums/forumdisplay.php?f=9', '[id^=sdpostrow_]', [{
+        title: '[id^=td_threadtitle_] .threadtitleline > a | trim',
+        href: '[id^=td_threadtitle_] .threadtitleline > a@href | trim',
+        postDate: '[id^=td_postdate_] .smallfont | trim'
+    }])
+        .paginate('.search_pagenav_text@href')
+        .limit(20)(function (err, title) {
+                title.forEach(function (element) {
 
-        product = db.collection('deals');
-        products.findOne({"title":element.title}, function(err, find) {
+                  product = db.collection('deals');
+                    products.findOne({"title":element.title}, function(err, find) {
 
-          if(find == null) {
+                      if(find == null) {
 
-            imageSearch(element.title, function (results) {
+                        imageSearch(element.title, function (results) {
 
-              if (results.items != undefined) {
-                var price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
-                console.log('in deals'+ results.items[0].link);
+                          if (results.items != undefined) {
+                            var price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
+                             console.log('in deals'+ results.items[0].link);
+                            console.log(results);
+                            var image = results.items[0].link;
+                            var a = element.postDate.split('\n');
+                            element["postTime"] = a[1].trim();
+                            if (a[0] == 'Today')
+                              element.postDate = moment().format("MM-DD-YYYY");
+                            else if (a[0] == 'Yesterday')
+                              element.postDate = moment().subtract(1, 'days').format("MM-DD-YYYY");
 
-                var image = results.items[0].link;
-                var a = element.postDate.split('\n');
-                element["postTime"] = a[1].trim();
-                if (a[0] == 'Today')
-                  element.postDate = moment().format("MM-DD-YYYY");
-                else if (a[0] == 'Yesterday')
-                  element.postDate = moment().subtract(1, 'days').format("MM-DD-YYYY");
+                            else
+                              element.postDate = a[0];
 
-                else
-                  element.postDate = a[0];
+                            product.updateOne({"title": element.title},
+                              {
+                                $set: {
+                                  "title": element.title,
+                                  "href": element.href,
+                                  "image": image,
+                                  "price": price[0],
+                                  "postDate": element.postDate,
+                                  "postTime": element.postTime
+                                }
+                              }, {upsert: true}, function (err) {
+                                if (err)
+                                  console.log(err);
+                              });
+                          }
+                        }, 0, 1);
+                      }
+                    });
 
-                product.updateOne({"title": element.title},
-                  {
-                    $set: {
-                      "title": element.title,
-                      "href": element.href,
-                      "image": image,
-                      "price": price[0],
-                      "postDate": element.postDate,
-                      "postTime": element.postTime
-                    }
-                  }, {upsert: true}, function (err) {
-                    if (err)
-                      console.log(err);
-                  });
-              }
-            }, 0, 1);
-          }
-        });
-
-      })
+                })
 
     });
 }

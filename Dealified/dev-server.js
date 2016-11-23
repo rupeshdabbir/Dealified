@@ -35,9 +35,9 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
 //Scheduler for running a job!
- var j = schedule.scheduleJob('*/1 * * *', function() {
+//  var j = schedule.scheduleJob('*/1 * * *', function() {
   crawler.crawl();
- });
+//  });
 
 app.use(devMiddleware);
 app.use(require('webpack-hot-middleware')(compiler));
