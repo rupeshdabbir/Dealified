@@ -1,4 +1,5 @@
-# React Webpack Skeleton
+# Rapchik / Dealified 
+  - "Don't ever miss a deal"
 
 [Demo] (http://rapchik.online)
 
