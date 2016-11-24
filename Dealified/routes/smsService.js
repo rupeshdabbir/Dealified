@@ -3,7 +3,7 @@
  */
 
 var Horseman = require('node-horseman');
-var horseman = new Horseman({timeout: 10000, interval: 150});
+var horseman = new Horseman({timeout: 15000, interval: 150});
 
 exports.sendSMSFree = function(toNumber, link){
 
@@ -13,11 +13,11 @@ exports.sendSMSFree = function(toNumber, link){
     setTimeout(() => {
       horseman
         .open('http://www.textport.com/')
-        .type('input[id="ctl00_BodyContent1_TextBoxMobileTo"]', '+19139536869')
+        .type('input[id="ctl00_BodyContent1_TextBoxMobileTo"]', toNumber)
         .type('input[id="ctl00_BodyContent1_TextBoxFrom"]', 'noreply@rapchik.online')
         .type('textarea[id="ctl00_BodyContent1_TextBoxMessage"]', link)
         .click('[name="ctl00$BodyContent1$ButtonSubmit"]')
-        .then(function(numLinks){
+        .then(function(){
           //console.log("SMS Sent");
           horseman.close();
           res();

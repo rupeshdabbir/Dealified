@@ -17,9 +17,9 @@ var transporter = nodemailer.createTransport("SMTP", {
   }
 });
 
-function computeUserEmailNotif(product, productUrl){
+function computeUserEmailNotif(product, productUrl, price){
 
-  console.log("[Email]: Product for email is: " +product);
+  //console.log("[Email]: Product for email is: " +product);
   client.get(product, function(err, result){
     if(err)
       console.log(err);
@@ -37,10 +37,12 @@ function computeUserEmailNotif(product, productUrl){
     console.log("[EMAIL]: Users to be sent is: "+users);
 
     _.each(users, function(userData){
-      if(userData.useremail)
-        sendMail(userData.useremail, productUrl);
-      else
-        console.error("No email in Redis. Please check!");
+      console.log("[E-mail]: Price is: "+price+"Range is: "+userData.priceRange);
+        if(userData.useremail){
+          parseInt(price) < parseInt(userData.priceRange)? sendMail(userData.useremail, productUrl): console.log("[E-mail]: Price did not meet criteria. Email not sent!");
+          console.log("[E-Mail]: Sending Email out for email: "+ userData.useremail);
+        } else
+          console.error("No email in Redis. Please check!");
     });
     console.log("[EMAIL]Result from Email: "+parsedResult);
   });
@@ -49,13 +51,17 @@ function computeUserEmailNotif(product, productUrl){
 
 exports.sendEmail = function(alert){
 
+  //console.log(alert);
+
   var message = JSON.parse(alert.toString());
   var product = Object.keys(message)[0];
   var productUrl = message[product].href;
+  var price = message[product].price.trim();
+  var priceSplit = price.split("$")[1];
 
-  console.log("ProductUrl is: "+productUrl+"product is: "+product);
+  console.log("ProductUrl is: "+productUrl+"product is: "+product+"With PriceSplit:"+priceSplit);
 
-  computeUserEmailNotif(product, productUrl);
+  computeUserEmailNotif(product, productUrl, priceSplit);
 
 }
 

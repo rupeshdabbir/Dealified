@@ -13,7 +13,7 @@ var _ = require('underscore');
 var smsFree = require('./smsService');
 var async = require('async');
 
-function computeUserSMSNotif(product, productUrl){
+function computeUserSMSNotif(product, productUrl, price){
 
   console.log("[SMS]: Proudct for email is: " +product);
   client.get(product, function(err, result){
@@ -26,12 +26,12 @@ function computeUserSMSNotif(product, productUrl){
       return user.sms==true;
     });
 
-    console.log("[SMS]: Users to be sent is: "+users);
+    console.log("[SMS]: In SMS Service: "+users);
 
     _.each(users, function(userData){
-      smsFree.sendSMSFree(userData, productUrl).then(function(){
-        console.log("SMS Sent!");
-      });
+      parseInt(price) < parseInt(userData.priceRange)? smsFree.sendSMSFree(userData.phone, productUrl).then(function(){
+          console.log("SMS Sent!");
+        }): console.log("[SMS]: Price did not meet criteria. SMS not sent!");
     });
     console.log("[SMS]Redis UserDB for SMS: "+result);
   });
@@ -43,7 +43,9 @@ exports.sendSMS = function(alert){
   var message = JSON.parse(alert.toString());
   var product = Object.keys(message)[0];
   var productUrl = message[product].href;
-  computeUserSMSNotif(product, productUrl);
+  var price = message[product].price.trim();
+  var priceSplit = price.split("$")[1];
+  computeUserSMSNotif(product, productUrl, priceSplit);
 
   //console.log(message);
 
