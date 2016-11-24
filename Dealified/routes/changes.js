@@ -16,6 +16,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
 });
 exports.watch = function(product, database, table){
   const title = product;
+
   r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
     if (err) throw err;
     r.db(database).table(table).filter(function (row) {

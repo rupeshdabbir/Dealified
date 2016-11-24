@@ -21,19 +21,24 @@ function computeUserSMSNotif(product, productUrl, price){
       console.log(err);
 
     var parsedResult = JSON.parse(result);
+    if([product] != '') {
 
-    var users = _.filter(parsedResult[product], function(user){
-      return user.sms==true;
-    });
+      var users = _.filter(parsedResult[product], function (user) {
+        return user.sms == true;
+      });
 
-    console.log("[SMS]: In SMS Service: "+users);
+      console.log("[SMS]: In SMS Service: " + users);
 
-    _.each(users, function(userData){
-      parseInt(price) < parseInt(userData.priceRange)? smsFree.sendSMSFree(userData.phone, productUrl).then(function(){
+      _.each(users, function (userData) {
+        parseInt(price) < parseInt(userData.priceRange) ? smsFree.sendSMSFree(userData.phone, productUrl).then(function () {
           console.log("SMS Sent!");
-        }): console.log("[SMS]: Price did not meet criteria. SMS not sent!");
-    });
-    console.log("[SMS]Redis UserDB for SMS: "+result);
+        }) : console.log("[SMS]: Price did not meet criteria. SMS not sent!");
+      });
+      console.log("[SMS]Redis UserDB for SMS: " + result);
+    }
+    else{
+      console.log("[SMS] nO Product");
+    }
   });
 
 }

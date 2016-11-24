@@ -64,21 +64,21 @@ exports.crawl = function() {
 
           if(find == null) {
 
-            imageSearch(element.title, function (results) {
+            // imageSearch(element.title, function (results) {
               console.log('in image');
 
-              if (results.items != undefined) {
+              // if (results.items != undefined) {
                 var price = element.price || 'Please check the title';
-                console.log('in deals'+ results.items[0].link);
+                // console.log('in deals'+ results.items[0].link);
                 // console.log(results);
-                var image = results.items[0].link;
+                // var image = results.items[0].link;
                
                 product.updateOne({"title": element.title},
                   {
                     $set: {
                       "title": element.title,
                       "href": element.href,
-                      "image": image,
+                      "image": 'image',
                       "price": price
                     }
                   }, {upsert: true}, function (err) {
@@ -108,8 +108,8 @@ exports.crawl = function() {
                   }
 
                 });
-              }
-            }, 0, 1);
+              // }
+            // }, 0, 1);
           }
         });
 
@@ -166,26 +166,25 @@ exports.crawl = function() {
               products = db.collection('products');
               // console.log(element.title);
               // console.log("Data.date is:"+data.date);
-
-              element.price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
+                 element.price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
 
 
               // _do something with results_;
 
               products.findOne({"title":element.title}, function(err, find){
                 if(find == null) {
-                  imageSearch(element.title, function (results) {
+                  // imageSearch(element.title, function (results) {
 
-                    if (results.items != undefined) {
-                      console.log(results.items[0].link);
+                    // if (results.items != undefined) {
+                    //   console.log(results.items[0].link);
 
-                      element.image = results.items[0].link;
+                      // element.image = results.items[0].link;
                       products.updateOne({"title": element.title},
                         {
                           $set: {
                             "title": element.title,
                             "href": element.href,
-                            "image": element.image,
+                            "image": '',
                             "price": element.price[0],
                             "postDate": data.date,
                             "postTime": data.time
@@ -221,8 +220,8 @@ exports.crawl = function() {
 
                       });
                     }
-                  }, 0, 1);
-                }
+                  // }, 0, 1);
+                // }
               });
 
             }
@@ -246,13 +245,13 @@ exports.crawl = function() {
 
                       if(find == null) {
 
-                        imageSearch(element.title, function (results) {
-
-                          if (results.items != undefined) {
+                        // imageSearch(element.title, function (results) {
+                        //
+                        //   if (results.items != undefined) {
                             var price = element.title.match(/\$((?:\d|\,)*\.?\d+)/g) || ['Please check the title'];
-                             console.log('in deals'+ results.items[0].link);
+                             // console.log('in deals'+ results.items[0].link);
                             // console.log(results);
-                            var image = results.items[0].link;
+                            // var image = results.items[0].link;
                             var a = element.postDate.split('\n');
                             element["postTime"] = a[1].trim();
                             if (a[0] == 'Today')
@@ -268,7 +267,7 @@ exports.crawl = function() {
                                 $set: {
                                   "title": element.title,
                                   "href": element.href,
-                                  "image": image,
+                                  "image": '',
                                   "price": price[0],
                                   "postDate": element.postDate,
                                   "postTime": element.postTime
@@ -301,8 +300,8 @@ exports.crawl = function() {
                               }
 
                             });
-                          }
-                        }, 0, 1);
+                        //   }
+                        // }, 0, 1);
                       }
                     });
 

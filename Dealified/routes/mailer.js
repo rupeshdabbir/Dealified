@@ -20,8 +20,8 @@ var transporter = nodemailer.createTransport("SMTP", {
 function computeUserEmailNotif(product, productUrl, price){
 
   //console.log("[Email]: Product for email is: " +product);
-  client.get(product, function(err, result){
-    if(err)
+  client.get(product, function(err, result) {
+    if (err)
       console.log(err);
 
     var parsedResult = JSON.parse(result);
@@ -29,22 +29,28 @@ function computeUserEmailNotif(product, productUrl, price){
     // var filteredUserList =  Object.keys(result)[0];
     //
     // console.log("FilteredUserList:" +filteredUserList);
+    if ([product] != '') {
+      var users = _.filter(parsedResult[product], function (user) {
+        return user.email == true;
+      });
 
-    var users = _.filter(parsedResult[product], function(user){
-      return user.email==true;
+
+    console.log("[EMAIL]: Users to be sent is: " + users);
+
+    _.each(users, function (userData) {
+      console.log("[E-mail]: Price is: " + price + "Range is: " + userData.priceRange);
+      if (userData.useremail) {
+        parseInt(price) < parseInt(userData.priceRange) ? sendMail(userData.useremail, productUrl) : console.log("[E-mail]: Price did not meet criteria. Email not sent!");
+        console.log("[E-Mail]: Sending Email out for email: " + userData.useremail);
+      } else
+        console.error("No email in Redis. Please check!");
     });
+    console.log("[EMAIL]Result from Email: " + parsedResult);
+  }
+    else{
+      console.log('[EMAIL] No Product!!');
 
-    console.log("[EMAIL]: Users to be sent is: "+users);
-
-    _.each(users, function(userData){
-      console.log("[E-mail]: Price is: "+price+"Range is: "+userData.priceRange);
-        if(userData.useremail){
-          parseInt(price) < parseInt(userData.priceRange)? sendMail(userData.useremail, productUrl): console.log("[E-mail]: Price did not meet criteria. Email not sent!");
-          console.log("[E-Mail]: Sending Email out for email: "+ userData.useremail);
-        } else
-          console.error("No email in Redis. Please check!");
-    });
-    console.log("[EMAIL]Result from Email: "+parsedResult);
+  }
   });
 
 }

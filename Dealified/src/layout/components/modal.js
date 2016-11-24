@@ -49,6 +49,9 @@ export class AlertModal extends React.Component {
       var priceRange= '200';
       this.setState({tags: tag, priceRange: '200'});
     });
+    pubsub.subscribe('nextPressed', (message, data) => {
+      this.onChange('next',data);
+    });
   }
 
   componentWillMount(){
@@ -78,19 +81,26 @@ export class AlertModal extends React.Component {
   handleSwitchChange = (field, value) => {
     this.setState({...this.state, [field]: value});
   };
-  onChange(value, nvalue){
 
+  onChange(value, nvalue){
+console.log(nvalue);
     var tag = this.state.tags;
-    if(nvalue.length >0 && nvalue[0].split('$')[1]) {
-      var splitVal = nvalue[0].split('$')[1];
-      if( _.indexOf(tag, splitVal) == -1)
-        tag = splitVal;
+    if(value != 'next') {
+      if (nvalue.length > 0 && nvalue[0].split('$')[1]) {
+        var splitVal = nvalue[0].split('$')[1];
+        if (_.indexOf(tag, splitVal) == -1)
+          tag = splitVal;
+      }
+      else {
+        nvalue[0] = nvalue[0];
+        if (_.indexOf(tag, nvalue[0]) == -1)
+          tag = nvalue[0];
+      }
     }
     else {
-      nvalue[0] = nvalue[0];
-      if(_.indexOf(tag, nvalue[0]) == -1)
-        tag = nvalue[0];
+      tag = nvalue;
     }
+    
     this.setState({tags: tag});
 
 
@@ -149,7 +159,7 @@ export class AlertModal extends React.Component {
       }
     }
    else if(priceRange == 'email'){
-      
+
         this.setState({useremail: value});
         localStorage.setItem(email, value);
     }
@@ -196,7 +206,7 @@ export class AlertModal extends React.Component {
   }
 
   returnSlider(){
-    return(<Slider className="slider-component" pinned snaps min={0} max={1000} step={200} editable value={this.state.priceRange} onChange={this.handleChange.bind(this, 'priceRange')} />
+    return(<Slider className="slider-component" pinned snaps min={0} max={3000} step={200} editable value={this.state.priceRange} onChange={this.handleChange.bind(this, 'priceRange')} />
     );
   }
 

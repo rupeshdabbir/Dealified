@@ -40,12 +40,16 @@ export default class StepsComponent extends React.Component {
     });
   }
   next() {
-    const current = this.state.current + 1;
-    this.setState({ current });
-    if(this.props.tags == ''){
-      alert('Please Enter atleast One Item');
+    if(this.state.current == 0 && this.props.state.tags == ''){
+      if(document.getElementsByClassName('theme_inputElement__27dyY theme_filled__1UI7Z')[0].value) {
+        pubsub.publish('nextPressed', document.getElementsByClassName('theme_inputElement__27dyY theme_filled__1UI7Z')[0].value);
+      }
+      else {
+        alert('Please Enter atleast One Item (Dont Forget to press Enter!!)');
+      }
     }
     else {
+
       const current = this.state.current + 1;
       this.setState({current});
     }

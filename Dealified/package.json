@@ -59,6 +59,7 @@
     "pubsub-js": "^1.5.4",
     "pubsubjs": "^0.3.9",
     "react": "^0.14.8",
+    "react-absolute-grid": "^2.0.1",
     "react-autosuggest": "^3.7.4",
     "react-blur-admin": "^0.10.0",
     "react-cards": "^0.2.2",

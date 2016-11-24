@@ -25,8 +25,7 @@ export class PageTop extends React.Component {
     super(props);
     this.state = {
       isMenuOpen: false,
-      appName: process.env.APP_NAME,
-      loggedOut:
+      appName: process.env.APP_NAME
     }
   }
 
